@@ -131,7 +131,7 @@ public class BoardScript : MonoBehaviour {
             auxCard = deck[numCard];
             muestra = auxCard.GetComponent<CardScript>().getPalo();
         }
-
+        center.ReceiveMuestra(muestra);
         foreach (PlayerScript player in players) player.OrderCards();
     }
 

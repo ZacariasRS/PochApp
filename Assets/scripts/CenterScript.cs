@@ -5,10 +5,12 @@ using UnityEngine;
 public class CenterScript : MonoBehaviour {
 
 
-    public List<GameObject> cards;
+    public List<CardScript> cards;
     public List<PlayerScript> players;
     public char paloInicio;
     public char muestra;
+    public bool revisarJugada;
+    public int auxCards;
 
 
     public void AddPlayers(List<PlayerScript> p)
@@ -23,36 +25,73 @@ public class CenterScript : MonoBehaviour {
 
     private void Awake()
     {
-        cards = new List<GameObject>(4);
-        for (int i = 0; i < 4; i++) cards.Add(null);
+        
     }
     // Use this for initialization
     void Start () {
-        
+        paloInicio = 'n';
+        revisarJugada = false;
+        cards = new List<CardScript>(players.Count);
+        for (int i = 0; i < players.Count; i++) cards.Add(null);
+        auxCards = 0;
     }
 	
 	// Update is called once per frame
 	void Update () {
-		if(cards.Count == 4)
+		if(revisarJugada)
         {
-
+            Debug.Log("revisaJugada");
         }
 	}
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log("Collision!");
-        collision.gameObject.GetComponent<CardScript>().EnterCenter();
-        if (!cards.Contains(collision.gameObject))
+        if (!revisarJugada)
         {
-            if (cards.Count == 0) paloInicio = collision.gameObject.GetComponent<CardScript>().getPalo();
-            cards[collision.gameObject.GetComponent<CardScript>().GetPlayer()] = collision.gameObject;
-        }
-        foreach (PlayerScript player in players)
-        {
-            player.RemoveCard(collision.gameObject);
-        }
-        //Destroy(collision.gameObject);
-    }
+            if (auxCards < players.Count)
+            {
+                Debug.Log("Collision!");
+                CardScript card = collision.gameObject.GetComponent<CardScript>();
+                card.EnterCenter(); // Carta entra al centro
 
+                // No entran 2 cartas a la vez, declaramos paloInicio, las cartas entran en la posicion del vector del jugador
+                if (!cards.Contains(card))
+                {
+                    if (cards.Count == 0)
+                    {
+                        paloInicio = card.getPalo();
+                        cards[card.GetPlayer()] = card;
+                    }
+                }
+
+                // Quitamos la carta al jugador       
+                players[card.GetPlayer()].RemoveCard(collision.gameObject);
+
+                // Terminamos turno y mandamos al siguiente si quedan cartas por jugar
+                auxCards++;
+                if (auxCards == players.Count)
+                {
+                    revisarJugada = true;
+                }
+                else
+                {
+                    int auxPlayer = card.GetPlayer();
+                    if (auxPlayer == (players.Count - 1))
+                    {
+                        players[auxPlayer].StopTurn();
+                        players[0].StartTurn();
+                    }
+                    else
+                    {
+                        Debug.Log(auxPlayer);
+                        players[auxPlayer].StopTurn();
+                        ++auxPlayer;
+                        Debug.Log(auxPlayer);
+                        players[auxPlayer].StartTurn();
+                    }
+                }
+            }
+        }
+        
+    }
 }

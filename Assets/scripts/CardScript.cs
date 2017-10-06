@@ -111,6 +111,9 @@ public class CardScript : MonoBehaviour {
         return player;
     }
 
-
+    public void ReturnToInitialPosition()
+    {
+        transform.position = initialPosition;
+    }
     
 }
