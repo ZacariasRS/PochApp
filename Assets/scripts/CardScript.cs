@@ -96,7 +96,7 @@ public class CardScript : MonoBehaviour {
         inCenter = true;
     }
 
-    public char getPalo()
+    public char GetPalo()
     {
         return palo;
     }
@@ -114,6 +114,11 @@ public class CardScript : MonoBehaviour {
     public void ReturnToInitialPosition()
     {
         transform.position = initialPosition;
+    }
+
+    public int GetRank()
+    {
+        return rank;
     }
     
 }

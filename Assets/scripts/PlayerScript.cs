@@ -82,5 +82,35 @@ public class PlayerScript : MonoBehaviour {
         myTurn = true;
     }
 
+    public bool HasPalo(char p)
+    {
+        bool res = false;
+        Debug.Log("Cards count: " + cards.Count);
+        for (int i = 0; i < cards.Count; i++) // TODO: parar bucle antes
+        {
+            Debug.Log("i: " + i);
+            CardScript auxCard = cards[i].GetComponent<CardScript>();
+            if (auxCard.GetPalo() == p)
+            {
+                res = true;
+            }
+        }
+        return res;
+    }
+
+    public bool HasHigherPaloRank(char p, int r)
+    {
+        bool res = false;
+        for (int i = 0; i < cards.Count; i++) // TODO: parar bucle antes
+        {
+            CardScript auxCard = cards[i].GetComponent<CardScript>();
+            if(auxCard.GetPalo() == p && auxCard.GetRank() > r)
+            {
+                res = true;
+            }
+        }
+        return res;
+    }
+
 
 }

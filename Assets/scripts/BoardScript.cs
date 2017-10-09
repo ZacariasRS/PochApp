@@ -95,7 +95,7 @@ public class BoardScript : MonoBehaviour {
         {
             //Debug.Log("i = " + i);
             //Debug.Log("Ronda Actual = " + rounds[actualRound]);
-            for (int j=0;j<10;j++)
+            for (int j=0;j<2;j++)
             {
                 aux = true;
                 while(aux)
@@ -116,7 +116,7 @@ public class BoardScript : MonoBehaviour {
         
         if (cardsGiven.Count == 40)
         {
-            muestra = deck[cardsGiven[9]].GetComponent<CardScript>().getPalo();
+            muestra = deck[cardsGiven[9]].GetComponent<CardScript>().GetPalo();
         }
         else
         {
@@ -129,7 +129,7 @@ public class BoardScript : MonoBehaviour {
                 }
             }
             auxCard = deck[numCard];
-            muestra = auxCard.GetComponent<CardScript>().getPalo();
+            muestra = auxCard.GetComponent<CardScript>().GetPalo();
         }
         center.ReceiveMuestra(muestra);
         foreach (PlayerScript player in players) player.OrderCards();
