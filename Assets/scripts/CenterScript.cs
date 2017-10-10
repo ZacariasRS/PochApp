@@ -5,16 +5,18 @@ using UnityEngine;
 public class CenterScript : MonoBehaviour {
 
 
-    public List<CardScript> cards;
-    public List<PlayerScript> players;
-    public char paloInicio;
-    public char muestra;
-    public bool revisarJugada;
-    public int auxCards;
-    public bool pasarTurno;
-    public int higherRank;
-    public bool hayMuestra;
-    public int rankMuestra;
+    public List<CardScript> cards; // cartas del centro
+    public List<PlayerScript> players; // los jugadores
+    public List<int> score; // TODO: la puntuacion
+    public char paloInicio; // variable que guarda el palo con el q se empieza la jugada
+    public char muestra; // valor de la muestra
+    public bool revisarJugada; // controlar si el centro debe ser revisado
+    public int auxCards; // cartas jugadas
+    public bool pasarTurno; // variable para saber si pasa turno al siguiente jugador
+    public int higherRank; // valor de rango mas alto en mesa
+    public bool hayMuestra; // si hay muestra en mesa
+    public int rankMuestra; // el rango de la muestra en mesa
+    public int firstPlayer; // el index del jugador que empieza la jugada
 
 
     public void AddPlayers(List<PlayerScript> p)
@@ -43,7 +45,10 @@ public class CenterScript : MonoBehaviour {
 	void Update () {
 		if(revisarJugada)
         {
-            Debug.Log("revisaJugada");
+            //Debug.Log("revisaJugada");
+            int nextPlayer = RevisarJugada(firstPlayer);
+            ResetValues();
+            players[nextPlayer].StartTurn();
         }
 	}
 
@@ -68,6 +73,8 @@ public class CenterScript : MonoBehaviour {
                         Debug.Log("Primera carta");
                         paloInicio = cardPalo;
                         higherRank = cardRank;
+                        //if (card.GetPalo() == muestra) hayMuestra = true;
+                        firstPlayer = cardPlayer;
                         card.EnterCenter();
                         pasarTurno = true;
                         cards.Add(card);
@@ -83,7 +90,7 @@ public class CenterScript : MonoBehaviour {
                                 Debug.Log("Tiene palo inicio y lo juega");
                                 if (cardRank > higherRank) // si la carta es de mayor rango que todas
                                 {
-                                    Debug.Log("Tiene palo inicio y la carta es mayor que la actual");
+                                    Debug.Log("Tiene palo inicio y la carta es mayor que la actual o hay muestra");
                                     card.EnterCenter();
                                     higherRank = cardRank;
                                     pasarTurno = true;
@@ -94,8 +101,18 @@ public class CenterScript : MonoBehaviour {
                                     Debug.Log("Tiene palo inicio y la carta es menor que la actual");
                                     if (players[cardPlayer].HasHigherPaloRank(cardPalo, higherRank)) // si tiene una que podria ser mayor
                                     {
-                                        Debug.Log("Tiene una carta mas grande");
-                                        card.ReturnToInitialPosition();
+                                        if (!hayMuestra)
+                                        {
+                                            Debug.Log("Tiene una carta mas grande y no hay muestra en mesa");
+                                            card.ReturnToInitialPosition();
+                                        } else
+                                        {
+                                            Debug.Log("Tiene una carta mas grande pero hay muestra en la mesa");
+                                            card.EnterCenter();
+                                            pasarTurno = true;
+                                            cards.Add(card);
+                                        }
+                                        
                                     }
                                     else
                                     {
@@ -210,14 +227,55 @@ public class CenterScript : MonoBehaviour {
         }
     }
 
-    public void RevisarJugada() 
+    public int RevisarJugada(int fp) 
     {
-        /*int cartaGanadora;
-        int mejorRango;
-        bool esMuestra;*/
+        int playerWinner = 0;
+        int bestRank = 0;
+        bool hasMuestra = false;
         for (int i = 0; i<cards.Capacity; i++)
         {
-
+            int index = (fp + i) % 4; // index del jugador apropiado
+            Debug.Log("index: " + index);
+            int auxRank = cards[i].GetRank();
+            if (hasMuestra)
+            {
+                if (cards[i].GetPalo() == muestra && auxRank > bestRank)
+                {
+                    bestRank = auxRank;
+                    playerWinner = index;
+                }
+            } else
+            {
+                if (cards[i].GetPalo() == muestra)
+                {
+                    playerWinner = index;
+                    bestRank = auxRank;
+                    hasMuestra = true;
+                } else
+                {
+                    if (auxRank > bestRank && cards[i].GetPalo() == paloInicio)
+                    {
+                        bestRank = auxRank;
+                        playerWinner = index;
+                    }
+                }
+            }
+            cards[i].HideCard();
         }
+        Debug.Log("PlayerWinner: " + playerWinner);
+        score[playerWinner]++; // TODO: Usar esto para hacer el score
+        revisarJugada = false;
+        return playerWinner;
+    }
+
+    public void ResetValues()
+    {
+        cards.Clear();
+        paloInicio = 'n'; // TODO: ¿Es necesario?
+        revisarJugada = false;
+        auxCards = 0;
+        higherRank = 0; // TODO: ¿Es necesario?
+        hayMuestra = false; // TODO: ¿Es necesario?
+        rankMuestra = 0; // TODO: ¿Es necesario?
     }
 }

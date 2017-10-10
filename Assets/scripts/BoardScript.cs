@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class BoardScript : MonoBehaviour {
 
-    public GameObject card;
-    public List<GameObject> deck;
-    public char muestra;
-    public List<PlayerScript> players;
-    public List<int> rounds;
-    public int actualRound;
-    public CenterScript center;
+    public GameObject card; // prefab usado para carta
+    public List<GameObject> deck; // la baraja entera
+    public char muestra; // la muestra
+    public List<PlayerScript> players; // los jugadores
+    public List<int> rounds; // numero de rondas
+    public int actualRound; // la ronda actual
+    public CenterScript center; // referencia al centro de mesa
 
     private Vector3 deckPosition = new Vector3(-3, 3, 0);
 
@@ -29,7 +29,22 @@ public class BoardScript : MonoBehaviour {
                 //Debug.Log(spritePath);
                 Sprite auxSprite = Resources.Load<Sprite>(spritePath);
                 if (auxSprite == null) Debug.Log("Spriteeee");
-                auxCard.GetComponent<CardScript>().CreateCard(auxSprite, i, 'b');
+                if (i == 1)
+                {
+                    auxCard.GetComponent<CardScript>().CreateCard(auxSprite, 10, 'b');
+                } else if (i == 3)
+                {
+                    auxCard.GetComponent<CardScript>().CreateCard(auxSprite, 9, 'b');
+                } else if (i == 2)
+                {
+                    auxCard.GetComponent<CardScript>().CreateCard(auxSprite, 1, 'b');
+                } else if (i >=4 && i<=7)
+                {
+                    auxCard.GetComponent<CardScript>().CreateCard(auxSprite, i-2, 'b');
+                } else if (i >=10 && i<=12)
+                {
+                    auxCard.GetComponent<CardScript>().CreateCard(auxSprite, i-4, 'b');
+                }
                 deck.Add(auxCard);
             }
             
@@ -45,7 +60,26 @@ public class BoardScript : MonoBehaviour {
                 //Debug.Log(spritePath);
                 Sprite auxSprite = Resources.Load<Sprite>(spritePath);
                 if (auxSprite == null) Debug.Log("Spriteeee");
-                auxCard.GetComponent<CardScript>().CreateCard(auxSprite, i, 'c');
+                if (i == 1)
+                {
+                    auxCard.GetComponent<CardScript>().CreateCard(auxSprite, 10, 'c');
+                }
+                else if (i == 3)
+                {
+                    auxCard.GetComponent<CardScript>().CreateCard(auxSprite, 9, 'c');
+                }
+                else if (i == 2)
+                {
+                    auxCard.GetComponent<CardScript>().CreateCard(auxSprite, 1, 'c');
+                }
+                else if (i >= 4 && i <= 7)
+                {
+                    auxCard.GetComponent<CardScript>().CreateCard(auxSprite, i - 2, 'c');
+                }
+                else if (i >= 10 && i <= 12)
+                {
+                    auxCard.GetComponent<CardScript>().CreateCard(auxSprite, i - 4, 'c');
+                }
                 deck.Add(auxCard);
             }
 
@@ -61,7 +95,26 @@ public class BoardScript : MonoBehaviour {
                 //Debug.Log(spritePath);
                 Sprite auxSprite = Resources.Load<Sprite>(spritePath);
                 if (auxSprite == null) Debug.Log("Spriteeee");
-                auxCard.GetComponent<CardScript>().CreateCard(auxSprite, i, 'e');
+                if (i == 1)
+                {
+                    auxCard.GetComponent<CardScript>().CreateCard(auxSprite, 10, 'e');
+                }
+                else if (i == 3)
+                {
+                    auxCard.GetComponent<CardScript>().CreateCard(auxSprite, 9, 'e');
+                }
+                else if (i == 2)
+                {
+                    auxCard.GetComponent<CardScript>().CreateCard(auxSprite, 1, 'e');
+                }
+                else if (i >= 4 && i <= 7)
+                {
+                    auxCard.GetComponent<CardScript>().CreateCard(auxSprite, i - 2, 'e');
+                }
+                else if (i >= 10 && i <= 12)
+                {
+                    auxCard.GetComponent<CardScript>().CreateCard(auxSprite, i - 4, 'e');
+                }
                 deck.Add(auxCard);
             }
 
@@ -77,7 +130,26 @@ public class BoardScript : MonoBehaviour {
                 //Debug.Log(spritePath);
                 Sprite auxSprite = Resources.Load<Sprite>(spritePath);
                 if (auxSprite == null) Debug.Log("Spriteeee");
-                auxCard.GetComponent<CardScript>().CreateCard(auxSprite, i, 'o');
+                if (i == 1)
+                {
+                    auxCard.GetComponent<CardScript>().CreateCard(auxSprite, 10, 'o');
+                }
+                else if (i == 3)
+                {
+                    auxCard.GetComponent<CardScript>().CreateCard(auxSprite, 9, 'o');
+                }
+                else if (i == 2)
+                {
+                    auxCard.GetComponent<CardScript>().CreateCard(auxSprite, 1, 'o');
+                }
+                else if (i >= 4 && i <= 7)
+                {
+                    auxCard.GetComponent<CardScript>().CreateCard(auxSprite, i - 2, 'o');
+                }
+                else if (i >= 10 && i <= 12)
+                {
+                    auxCard.GetComponent<CardScript>().CreateCard(auxSprite, i - 4, 'o');
+                }
                 deck.Add(auxCard);
             }
 

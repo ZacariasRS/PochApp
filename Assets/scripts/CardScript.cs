@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class CardScript : MonoBehaviour {
 
-    public int rank;
-    public char palo;
-    public int player;
+    public int rank; // valor de la carta
+    public char palo; // palo al que pertenece
+    public int player; // jugador al que pertenece la carta
 
     private SpriteRenderer mySpriteRenderer;
     private Sprite mySprite;
@@ -80,13 +80,24 @@ public class CardScript : MonoBehaviour {
             if (imPlayer)
             {
                 mySpriteRenderer.sprite = mySprite;
+                mySpriteRenderer.enabled = true;
             }
             else
             {
                 Sprite backSprite = Resources.Load<Sprite>("back");
                 mySpriteRenderer.sprite = backSprite;
+                mySpriteRenderer.enabled = true;
             }
         }
+    }
+
+    public void HideCard()
+    {
+        if (mySpriteRenderer != null)
+        {
+            mySpriteRenderer.enabled = false;
+        }
+        else Debug.Log("Hide Card: mySpriteRenderer == null");
     }
 
     public void EnterCenter()

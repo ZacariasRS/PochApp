@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class PlayerScript : MonoBehaviour {
 
-    public List<GameObject> cards;
-    public bool imPlayer;
-    public bool myTurn;
+    public List<GameObject> cards; // las cartas que posee el jugador
+    public bool imPlayer; // soy un jugador, sprite de carta o back
+    public bool myTurn; // indica si es su turno
 
 	// Use this for initialization
 	void Start () {
@@ -51,7 +51,7 @@ public class PlayerScript : MonoBehaviour {
         if (cards.Count > 0)
         {
             float auxXY = -(cards.Count / 2.0f);
-            float auxZ = 0;
+            float auxZ = 1;
             foreach (GameObject card in cards)
             {
                 if (card.transform.position.x == 0)
@@ -65,7 +65,7 @@ public class PlayerScript : MonoBehaviour {
                     card.transform.position += v;
                 }
                 auxXY += 1.0f;
-                auxZ += 0.1f;
+                auxZ -= 0.1f;
             }
         }
     }
