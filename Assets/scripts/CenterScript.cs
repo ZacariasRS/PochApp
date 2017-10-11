@@ -7,9 +7,11 @@ public class CenterScript : MonoBehaviour {
 
     public List<CardScript> cards; // cartas del centro
     public List<PlayerScript> players; // los jugadores
-    public List<int> score; // TODO: la puntuacion
     public char paloInicio; // variable que guarda el palo con el q se empieza la jugada
     public char muestra; // valor de la muestra
+    public int actualRound; // valor de la ronda actual
+    public int numCards;
+    public int numTurns;
     public bool revisarJugada; // controlar si el centro debe ser revisado
     public int auxCards; // cartas jugadas
     public bool pasarTurno; // variable para saber si pasa turno al siguiente jugador
@@ -17,7 +19,7 @@ public class CenterScript : MonoBehaviour {
     public bool hayMuestra; // si hay muestra en mesa
     public int rankMuestra; // el rango de la muestra en mesa
     public int firstPlayer; // el index del jugador que empieza la jugada
-
+    public bool nextRound; // se pide a board que reparta la siguiente ronda
 
     public void AddPlayers(List<PlayerScript> p)
     {
@@ -29,6 +31,11 @@ public class CenterScript : MonoBehaviour {
         muestra = m;
     }
 
+    public void ReceiveRonda(int r, int nc)
+    {
+        actualRound = r;
+        numCards = nc;
+    }
     private void Awake()
     {
         
@@ -39,17 +46,28 @@ public class CenterScript : MonoBehaviour {
         revisarJugada = false;
         cards = new List<CardScript>(players.Count);
         pasarTurno = false;
+        nextRound = false;
+        numTurns = 0;
     }
 	
 	// Update is called once per frame
 	void Update () {
-		if(revisarJugada)
+        if (!nextRound)
         {
-            //Debug.Log("revisaJugada");
-            int nextPlayer = RevisarJugada(firstPlayer);
-            ResetValues();
-            players[nextPlayer].StartTurn();
+            if (revisarJugada)
+            {
+                //Debug.Log("revisaJugada");
+                int nextPlayer = RevisarJugada(firstPlayer);
+                revisarJugada = false;
+                //Debug.Log("numTurns, numCards" + numTurns + ", " + numCards);
+                if (numTurns != numCards) players[nextPlayer].StartTurn();
+                if (numTurns == numCards) nextRound = true;
+            }
+        } else
+        {
+            Debug.Log("Ronda over");
         }
+		
 	}
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -81,16 +99,16 @@ public class CenterScript : MonoBehaviour {
                     }
                     else // No es la primera carta, introducir logica de juego de la pocha
                     {
-                        Debug.Log("No primera carta");
+                        //Debug.Log("No primera carta");
                         if (players[cardPlayer].HasPalo(paloInicio)) // Si tienes del palo de inicio
                         {
-                            Debug.Log("Tiene palo inicio");
+                            //Debug.Log("Tiene palo inicio");
                             if (cardPalo == paloInicio)
                             {
-                                Debug.Log("Tiene palo inicio y lo juega");
+                                //Debug.Log("Tiene palo inicio y lo juega");
                                 if (cardRank > higherRank) // si la carta es de mayor rango que todas
                                 {
-                                    Debug.Log("Tiene palo inicio y la carta es mayor que la actual o hay muestra");
+                                    //Debug.Log("Tiene palo inicio y la carta es mayor que la actual o hay muestra");
                                     card.EnterCenter();
                                     higherRank = cardRank;
                                     pasarTurno = true;
@@ -98,16 +116,16 @@ public class CenterScript : MonoBehaviour {
                                 }
                                 else // si la carta es menor 
                                 {
-                                    Debug.Log("Tiene palo inicio y la carta es menor que la actual");
+                                    //Debug.Log("Tiene palo inicio y la carta es menor que la actual");
                                     if (players[cardPlayer].HasHigherPaloRank(cardPalo, higherRank)) // si tiene una que podria ser mayor
                                     {
                                         if (!hayMuestra)
                                         {
-                                            Debug.Log("Tiene una carta mas grande y no hay muestra en mesa");
+                                            //Debug.Log("Tiene una carta mas grande y no hay muestra en mesa");
                                             card.ReturnToInitialPosition();
                                         } else
                                         {
-                                            Debug.Log("Tiene una carta mas grande pero hay muestra en la mesa");
+                                            //Debug.Log("Tiene una carta mas grande pero hay muestra en la mesa");
                                             card.EnterCenter();
                                             pasarTurno = true;
                                             cards.Add(card);
@@ -116,7 +134,7 @@ public class CenterScript : MonoBehaviour {
                                     }
                                     else
                                     {
-                                        Debug.Log("No tiene una carta mas grande");
+                                        //Debug.Log("No tiene una carta mas grande");
                                         card.EnterCenter();
                                         pasarTurno = true;
                                         cards.Add(card);
@@ -124,52 +142,52 @@ public class CenterScript : MonoBehaviour {
                                 }
                             } else
                             {
-                                Debug.Log("Tiene palo inicio y juega otro palo");
+                                //Debug.Log("Tiene palo inicio y juega otro palo");
                                 card.ReturnToInitialPosition();
                             }
                         } else // No tiene palo de inicio
                         {
-                            Debug.Log("No tiene palo inicio");
+                            //Debug.Log("No tiene palo inicio");
                             if (players[cardPlayer].HasPalo(muestra)) // si tiene muestra
                             {
-                                Debug.Log("Tiene muestra");
+                                //Debug.Log("Tiene muestra");
                                 if (hayMuestra) // Si hay muestra ya en la mesa
                                 {
                                     if (players[cardPlayer].HasHigherPaloRank(muestra, rankMuestra))
                                     {
-                                        Debug.Log("Tiene muestra y hay muestra en mesa y tenemos una mas grande que la actual");
+                                        //Debug.Log("Tiene muestra y hay muestra en mesa y tenemos una mas grande que la actual");
                                         if (cardPalo == muestra)
                                         {
                                             if (cardRank > rankMuestra)
                                             {
-                                                Debug.Log("Tiene muestra y hay muestra en mesa y tenemos una mas grande y la jugamos");
+                                                //Debug.Log("Tiene muestra y hay muestra en mesa y tenemos una mas grande y la jugamos");
                                                 card.EnterCenter();
                                                 pasarTurno = true;
                                                 rankMuestra = cardRank;
                                                 cards.Add(card);
                                             } else
                                             {
-                                                Debug.Log("Tiene muestra y hay muestra en mesa y tenemos una mas grande y no la jugamos");
+                                                //Debug.Log("Tiene muestra y hay muestra en mesa y tenemos una mas grande y no la jugamos");
                                                 card.ReturnToInitialPosition();
                                             }
                                         } else
                                         {
-                                            Debug.Log("Tiene muestra y hay muestra en mesa y tenemos una mas grande y no juega muestra");
+                                            //Debug.Log("Tiene muestra y hay muestra en mesa y tenemos una mas grande y no juega muestra");
                                             card.ReturnToInitialPosition();
                                         }
                                     } else
                                     {
-                                        Debug.Log("Tiene muestra y hay muestra en mesa y no tiene una mas grande");
+                                        //Debug.Log("Tiene muestra y hay muestra en mesa y no tiene una mas grande");
                                         card.EnterCenter();
                                         pasarTurno = true;
                                         cards.Add(card);
                                     }
                                 } else // No hay muestra en la mesa
                                 {
-                                    Debug.Log("No hay muestra en la mesa y tenemos muestra");
+                                    //Debug.Log("No hay muestra en la mesa y tenemos muestra");
                                     if (cardPalo == muestra)
                                     {
-                                        Debug.Log("Tiene muestra y No hay muestra en la mesa y tenemos muestra y la carta es muestra");
+                                        //Debug.Log("Tiene muestra y No hay muestra en la mesa y tenemos muestra y la carta es muestra");
                                         card.EnterCenter();
                                         pasarTurno = true;
                                         hayMuestra = true;
@@ -177,13 +195,13 @@ public class CenterScript : MonoBehaviour {
                                         cards.Add(card);
                                     } else
                                     {
-                                        Debug.Log("No hay muestra en la mesa tenemos muestra y la carta no es muestra");
+                                        //Debug.Log("No hay muestra en la mesa tenemos muestra y la carta no es muestra");
                                         card.ReturnToInitialPosition();
                                     }
                                 }
                             } else // No tiene palo inicio ni muestra, puede echar cualquiera
                             {
-                                Debug.Log("No tiene palo inicio y no tiene muestra");
+                                //Debug.Log("No tiene palo inicio y no tiene muestra");
                                 card.EnterCenter();
                                 pasarTurno = true;
                                 cards.Add(card);
@@ -229,6 +247,7 @@ public class CenterScript : MonoBehaviour {
 
     public int RevisarJugada(int fp) 
     {
+        GetComponent<BoxCollider2D>().enabled = false;
         int playerWinner = 0;
         int bestRank = 0;
         bool hasMuestra = false;
@@ -263,8 +282,10 @@ public class CenterScript : MonoBehaviour {
             cards[i].HideCard();
         }
         Debug.Log("PlayerWinner: " + playerWinner);
-        score[playerWinner]++; // TODO: Usar esto para hacer el score
-        revisarJugada = false;
+        ScoreBoard.GetInstance().IncrementRoundsWonRoundPlayer(actualRound, playerWinner); // TODO: Usar esto para hacer el score
+        numTurns++;
+        cards.Clear();
+        GetComponent<BoxCollider2D>().enabled = true;
         return playerWinner;
     }
 
@@ -277,5 +298,12 @@ public class CenterScript : MonoBehaviour {
         higherRank = 0; // TODO: ¿Es necesario?
         hayMuestra = false; // TODO: ¿Es necesario?
         rankMuestra = 0; // TODO: ¿Es necesario?
+        numTurns = 0; // TODO: ¿Es necesario?
+        nextRound = false;
+    }
+
+    public bool NeedNextRound()
+    {
+        return nextRound;
     }
 }

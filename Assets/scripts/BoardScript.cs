@@ -8,9 +8,11 @@ public class BoardScript : MonoBehaviour {
     public List<GameObject> deck; // la baraja entera
     public char muestra; // la muestra
     public List<PlayerScript> players; // los jugadores
-    public List<int> rounds; // numero de rondas
+    public List<int> rounds; // cuantas cartas se reparten, numero de rondas
     public int actualRound; // la ronda actual
     public CenterScript center; // referencia al centro de mesa
+    public int startPlayer;
+
 
     private Vector3 deckPosition = new Vector3(-3, 3, 0);
 
@@ -158,6 +160,7 @@ public class BoardScript : MonoBehaviour {
 
     void RepartirRonda()
     {
+        Debug.Log("Repartimos ronda (num, numCards): " + actualRound + ", " + rounds[actualRound]);
         List<int> cardsGiven = new List<int>(40);
         GameObject auxCard = null;
         bool aux = true;
@@ -167,7 +170,7 @@ public class BoardScript : MonoBehaviour {
         {
             //Debug.Log("i = " + i);
             //Debug.Log("Ronda Actual = " + rounds[actualRound]);
-            for (int j=0;j<2;j++)
+            for (int j=0;j<rounds[actualRound];j++)
             {
                 aux = true;
                 while(aux)
@@ -204,7 +207,15 @@ public class BoardScript : MonoBehaviour {
             muestra = auxCard.GetComponent<CardScript>().GetPalo();
         }
         center.ReceiveMuestra(muestra);
+        center.ReceiveRonda(actualRound, rounds[actualRound]);
+        actualRound++; // TODO: Cambio de ronda
         foreach (PlayerScript player in players) player.OrderCards();
+        for (int i = 0; i < players.Count; i++)
+        {
+            if (i == startPlayer) players[startPlayer].StartTurn();
+            else players[i].StopTurn();
+        }
+        startPlayer = (startPlayer + 1) % players.Count;
     }
 
 
@@ -213,16 +224,22 @@ public class BoardScript : MonoBehaviour {
         // Players
         PlayerScript[] auxPlayers = GetComponentsInChildren<PlayerScript>();
         for (int i = 0; i < 4; i++) players.Add(auxPlayers[i]);
+        startPlayer = 0;
 
         //
         // rondas = new int[(40 / players.Count)+(players.Count - 1)];
-        for (int i = 0; i < players.Count; i++) rounds.Add(1);
-        for (int i = 2; i <= (40/players.Count);i++)
+        for (int i = 0; i < players.Count; i++) rounds.Add(1); // agregar tantas de 1 como jugadores
+        for (int i = 2; i <= (40/players.Count);i++) // agregar rondas intermedias
         {
             rounds.Add(i);
         }
+        for (int i = 0; i < (players.Count - 1); i++) // agregar faltantes de la ultima ronda
+        {
+            rounds.Add(40 / players.Count);
+        }
         actualRound = 0;
-
+        ScoreBoard.GetInstance().InitiateScoreBoard(rounds.Count, players.Count); // inicializamos el scoreBoard
+        Debug.Log(ScoreBoard.GetInstance().ScoreSize());
         //
         center = GetComponentInChildren<CenterScript>();
         center.AddPlayers(players);
@@ -236,6 +253,11 @@ public class BoardScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        
+        if (center.NeedNextRound())
+        {
+            center.nextRound = false;
+            center.ResetValues();
+            RepartirRonda();
+        }
     }
 }

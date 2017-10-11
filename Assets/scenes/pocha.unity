@@ -250,7 +250,7 @@ Prefab:
     - target: {fileID: 114438037308764798, guid: acc896de772ac9242b844dfccbcf42e0,
         type: 2}
       propertyPath: myTurn
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114266029660529646, guid: acc896de772ac9242b844dfccbcf42e0,
         type: 2}

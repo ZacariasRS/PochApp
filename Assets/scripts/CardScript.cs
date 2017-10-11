@@ -10,9 +10,9 @@ public class CardScript : MonoBehaviour {
 
     private SpriteRenderer mySpriteRenderer;
     private Sprite mySprite;
-    private bool alreadyClicked;
+    public bool alreadyClicked;
     private Vector3 initialPosition;
-    private bool inCenter;
+    public bool inCenter;
 
     private void Awake()
     {
@@ -21,7 +21,6 @@ public class CardScript : MonoBehaviour {
     // Use this for initialization
     void Start () {
         alreadyClicked = false;
-        initialPosition = transform.position;
         inCenter = false;
 	}
 	
@@ -37,7 +36,7 @@ public class CardScript : MonoBehaviour {
             if (alreadyClicked)
             {
                 transform.localScale = new Vector3(1.0f, 1.0f, 0);
-                transform.position = initialPosition;
+                ReturnToInitialPosition();
 
                 alreadyClicked = false;
             }
@@ -89,6 +88,7 @@ public class CardScript : MonoBehaviour {
                 mySpriteRenderer.enabled = true;
             }
         }
+        //SaveInitialPosition();
     }
 
     public void HideCard()
@@ -96,6 +96,8 @@ public class CardScript : MonoBehaviour {
         if (mySpriteRenderer != null)
         {
             mySpriteRenderer.enabled = false;
+            transform.position = new Vector3(10, 10, 10);
+            inCenter = false;
         }
         else Debug.Log("Hide Card: mySpriteRenderer == null");
     }
@@ -122,6 +124,10 @@ public class CardScript : MonoBehaviour {
         return player;
     }
 
+    public void SaveInitialPosition()
+    {
+        initialPosition = transform.position;
+    }
     public void ReturnToInitialPosition()
     {
         transform.position = initialPosition;

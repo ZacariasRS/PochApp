@@ -17,6 +17,7 @@ public class PlayerScript : MonoBehaviour {
 	void Update () {
 
         //OrderCards();
+        /*
 		if (!myTurn)
         {
             foreach (GameObject card in cards)
@@ -31,6 +32,7 @@ public class PlayerScript : MonoBehaviour {
                 card.GetComponent<BoxCollider2D>().enabled = true; // TODO: hacerlo en Stop/StartTurn??
             }
         }
+        */
 	}
 
     public void AddCard(GameObject card)
@@ -64,6 +66,7 @@ public class PlayerScript : MonoBehaviour {
                     Vector3 v = new Vector3(0, auxXY, auxZ);
                     card.transform.position += v;
                 }
+                card.GetComponent<CardScript>().SaveInitialPosition();
                 auxXY += 1.0f;
                 auxZ -= 0.1f;
             }
@@ -73,22 +76,30 @@ public class PlayerScript : MonoBehaviour {
     public void StopTurn()
     {
         Debug.Log(this.name + " StopTurn");
+        foreach (GameObject card in cards)
+        {
+            card.GetComponent<BoxCollider2D>().enabled = false;
+        }
         myTurn = false;
     }
 
     public void StartTurn()
     {
         Debug.Log(this.name + " Start Turn");
+        foreach (GameObject card in cards)
+        {
+            card.GetComponent<BoxCollider2D>().enabled = true; // TODO: hacerlo en Stop/StartTurn??
+        }
         myTurn = true;
     }
 
     public bool HasPalo(char p)
     {
         bool res = false;
-        Debug.Log("Cards count: " + cards.Count);
+        //Debug.Log("Cards count: " + cards.Count);
         for (int i = 0; i < cards.Count; i++) // TODO: parar bucle antes
         {
-            Debug.Log("i: " + i);
+            //Debug.Log("i: " + i);
             CardScript auxCard = cards[i].GetComponent<CardScript>();
             if (auxCard.GetPalo() == p)
             {
