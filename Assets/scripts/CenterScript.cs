@@ -284,7 +284,11 @@ public class CenterScript : MonoBehaviour {
         Debug.Log("PlayerWinner: " + playerWinner);
         ScoreBoard.GetInstance().IncrementRoundsWonRoundPlayer(actualRound, playerWinner); // TODO: Usar esto para hacer el score
         numTurns++;
+        // TODO: Maybe meterlo en una funcion
         cards.Clear();
+        hayMuestra = false;
+        rankMuestra = 0;
+        //
         GetComponent<BoxCollider2D>().enabled = true;
         return playerWinner;
     }

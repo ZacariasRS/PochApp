@@ -229,14 +229,14 @@ public class BoardScript : MonoBehaviour {
         //
         // rondas = new int[(40 / players.Count)+(players.Count - 1)];
         for (int i = 0; i < players.Count; i++) rounds.Add(1); // agregar tantas de 1 como jugadores
-        for (int i = 2; i <= (40/players.Count);i++) // agregar rondas intermedias
+        /*for (int i = 2; i <= (40/players.Count);i++) // agregar rondas intermedias
         {
             rounds.Add(i);
         }
         for (int i = 0; i < (players.Count - 1); i++) // agregar faltantes de la ultima ronda
         {
             rounds.Add(40 / players.Count);
-        }
+        }*/
         actualRound = 0;
         ScoreBoard.GetInstance().InitiateScoreBoard(rounds.Count, players.Count); // inicializamos el scoreBoard
         Debug.Log(ScoreBoard.GetInstance().ScoreSize());
@@ -257,7 +257,14 @@ public class BoardScript : MonoBehaviour {
         {
             center.nextRound = false;
             center.ResetValues();
-            RepartirRonda();
+            if (actualRound < rounds.Count)
+            {
+                RepartirRonda();
+            } else
+            {
+                Debug.Log("ITS OVER");
+            }
+            
         }
     }
 }
