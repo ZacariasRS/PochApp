@@ -81,6 +81,10 @@ MonoBehaviour:
   rank: 0
   palo: 0
   player: 0
+  greyScale: {fileID: 2100000, guid: 14ebb622e6e427a449df28289c7c9d01, type: 2}
+  def: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  alreadyClicked: 0
+  inCenter: 0
 --- !u!212 &212604213818397000
 SpriteRenderer:
   m_ObjectHideFlags: 1

@@ -75,20 +75,22 @@ public class PlayerScript : MonoBehaviour {
 
     public void StopTurn()
     {
-        Debug.Log(this.name + " StopTurn");
+        //Debug.Log(this.name + " StopTurn");
         foreach (GameObject card in cards)
         {
             card.GetComponent<BoxCollider2D>().enabled = false;
+            card.GetComponent<CardScript>().SetGreyMaterial();
         }
         myTurn = false;
     }
 
     public void StartTurn()
     {
-        Debug.Log(this.name + " Start Turn");
+        //Debug.Log(this.name + " Start Turn");
         foreach (GameObject card in cards)
         {
             card.GetComponent<BoxCollider2D>().enabled = true; // TODO: hacerlo en Stop/StartTurn??
+            card.GetComponent<CardScript>().SetDefMaterial();
         }
         myTurn = true;
     }
@@ -122,6 +124,4 @@ public class PlayerScript : MonoBehaviour {
         }
         return res;
     }
-
-
 }

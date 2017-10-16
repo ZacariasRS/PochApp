@@ -3,6 +3,10 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2017
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PochApp", "PochApp.csproj", "{97CCB361-37BC-FBBD-4ACB-80CCDACECE16}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PochApp.Plugins", "PochApp.Plugins.csproj", "{ABA154AD-B6F4-BEC6-8CC6-2A60C5E00BE9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PochApp.Editor", "PochApp.Editor.csproj", "{48A35DF0-75FC-E576-77E3-83914D786334}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +17,14 @@ Global
 		{97CCB361-37BC-FBBD-4ACB-80CCDACECE16}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{97CCB361-37BC-FBBD-4ACB-80CCDACECE16}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{97CCB361-37BC-FBBD-4ACB-80CCDACECE16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABA154AD-B6F4-BEC6-8CC6-2A60C5E00BE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABA154AD-B6F4-BEC6-8CC6-2A60C5E00BE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABA154AD-B6F4-BEC6-8CC6-2A60C5E00BE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABA154AD-B6F4-BEC6-8CC6-2A60C5E00BE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48A35DF0-75FC-E576-77E3-83914D786334}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48A35DF0-75FC-E576-77E3-83914D786334}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48A35DF0-75FC-E576-77E3-83914D786334}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48A35DF0-75FC-E576-77E3-83914D786334}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

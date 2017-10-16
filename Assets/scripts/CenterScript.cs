@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CenterScript : MonoBehaviour {
 
@@ -20,6 +21,17 @@ public class CenterScript : MonoBehaviour {
     public int rankMuestra; // el rango de la muestra en mesa
     public int firstPlayer; // el index del jugador que empieza la jugada
     public bool nextRound; // se pide a board que reparta la siguiente ronda
+    public bool betTime;
+    public int playerToBet;
+    public int lastPlayerToBet;
+
+    public InputField betD;
+    public InputField betR;
+    public InputField betU;
+    public InputField betL;
+    
+
+
 
     public void AddPlayers(List<PlayerScript> p)
     {
@@ -38,7 +50,11 @@ public class CenterScript : MonoBehaviour {
     }
     private void Awake()
     {
-        
+        betD.interactable = false;
+        betR.interactable = false;
+        betU.interactable = false;
+        betL.interactable = false;
+        playerToBet = 0;
     }
     // Use this for initialization
     void Start () {
@@ -48,31 +64,180 @@ public class CenterScript : MonoBehaviour {
         pasarTurno = false;
         nextRound = false;
         numTurns = 0;
+        betTime = true;
+        // UI
     }
 	
 	// Update is called once per frame
 	void Update () {
-        if (!nextRound)
+        if (betTime)
         {
-            if (revisarJugada)
+            switch(playerToBet)
             {
-                //Debug.Log("revisaJugada");
-                int nextPlayer = RevisarJugada(firstPlayer);
-                revisarJugada = false;
-                //Debug.Log("numTurns, numCards" + numTurns + ", " + numCards);
-                if (numTurns != numCards) players[nextPlayer].StartTurn();
-                if (numTurns == numCards) nextRound = true;
+                case 0:
+                    betD.interactable = true;
+                    if (betD.isFocused && Input.GetKeyDown(KeyCode.UpArrow))
+                    {
+                        if (playerToBet == lastPlayerToBet)
+                        {
+                            if (int.Parse(betD.text) <= numCards)
+                            {
+                                if (int.Parse(betD.text) + ScoreBoard.GetInstance().SumOfBetsOfRound(actualRound) != numCards)
+                                {
+                                    ScoreBoard.GetInstance().SetBetRoundPlayer(actualRound, playerToBet, int.Parse(betD.text)); // TODO: no se puede apostar el mismo numero de cartas repartidas
+                                    betD.interactable = false;
+                                    playerToBet = -1;
+                                    lastPlayerToBet = -1;
+                                    betTime = false;
+                                }
+                                else Debug.Log("No puedes apostar eso");
+                            } 
+                            else Debug.Log("Nano no apuestes tanto");
+                        } else
+                        {
+                            if (int.Parse(betD.text) <= numCards)
+                            {
+                                ScoreBoard.GetInstance().SetBetRoundPlayer(actualRound, playerToBet, int.Parse(betD.text));
+                                playerToBet = (playerToBet + 1) % players.Count;
+                                betD.interactable = false;
+                            }
+                            else Debug.Log("Nano no apuestes tanto");
+                            
+                        }
+                    }
+                    break;
+                case 1:
+                    betR.interactable = true;
+                    if (betR.isFocused && Input.GetKeyDown(KeyCode.UpArrow))
+                    {
+                        if (playerToBet == lastPlayerToBet)
+                        {
+                            if (int.Parse(betR.text) <= numCards)
+                            {
+                                if (int.Parse(betR.text) + ScoreBoard.GetInstance().SumOfBetsOfRound(actualRound) != numCards)
+                                {
+                                    ScoreBoard.GetInstance().SetBetRoundPlayer(actualRound, playerToBet, int.Parse(betR.text)); // TODO: no se puede apostar el mismo numero de cartas repartidas
+                                    betR.interactable = false;
+                                    playerToBet = -1;
+                                    lastPlayerToBet = -1;
+                                    betTime = false;
+                                }
+                                else Debug.Log("No puedes apostar eso");
+                            }
+                            else Debug.Log("Nano no apuestes tanto");
+                        }
+                        else
+                        {
+                            if (int.Parse(betR.text) <= numCards)
+                            {
+                                ScoreBoard.GetInstance().SetBetRoundPlayer(actualRound, playerToBet, int.Parse(betR.text));
+                                playerToBet = (playerToBet + 1) % players.Count;
+                                betR.interactable = false;
+                            }
+                            else Debug.Log("Nano no apuestes tanto");
+
+                        }
+                    }
+                    break;
+                case 2:
+                    betU.interactable = true;
+                    if (betU.isFocused && Input.GetKeyDown(KeyCode.UpArrow))
+                    {
+                        if (playerToBet == lastPlayerToBet)
+                        {
+                            if (int.Parse(betU.text) <= numCards)
+                            {
+                                if (int.Parse(betU.text) + ScoreBoard.GetInstance().SumOfBetsOfRound(actualRound) != numCards)
+                                {
+                                    ScoreBoard.GetInstance().SetBetRoundPlayer(actualRound, playerToBet, int.Parse(betU.text)); // TODO: no se puede apostar el mismo numero de cartas repartidas
+                                    betU.interactable = false;
+                                    playerToBet = -1;
+                                    lastPlayerToBet = -1;
+                                    betTime = false;
+                                }
+                                else Debug.Log("No puedes apostar eso");
+                            }
+                            else Debug.Log("Nano no apuestes tanto");
+                        }
+                        else
+                        {
+                            if (int.Parse(betU.text) <= numCards)
+                            {
+                                ScoreBoard.GetInstance().SetBetRoundPlayer(actualRound, playerToBet, int.Parse(betU.text));
+                                playerToBet = (playerToBet + 1) % players.Count;
+                                betU.interactable = false;
+                            }
+                            else Debug.Log("Nano no apuestes tanto");
+
+                        }
+                    }
+                    break;
+                case 3:
+                    betL.interactable = true;
+                    if (betL.isFocused && Input.GetKeyDown(KeyCode.UpArrow))
+                    {
+                        if (playerToBet == lastPlayerToBet)
+                        {
+                            if (int.Parse(betL.text) <= numCards)
+                            {
+                                if (int.Parse(betL.text) + ScoreBoard.GetInstance().SumOfBetsOfRound(actualRound) != numCards)
+                                {
+                                    ScoreBoard.GetInstance().SetBetRoundPlayer(actualRound, playerToBet, int.Parse(betL.text)); // TODO: no se puede apostar el mismo numero de cartas repartidas
+                                    betL.interactable = false;
+                                    playerToBet = -1;
+                                    lastPlayerToBet = -1;
+                                    betTime = false;
+                                }
+                                else Debug.Log("No puedes apostar eso");
+                            }
+                            else Debug.Log("Nano no apuestes tanto");
+                        }
+                        else
+                        {
+                            if (int.Parse(betL.text) <= numCards)
+                            {
+                                ScoreBoard.GetInstance().SetBetRoundPlayer(actualRound, playerToBet, int.Parse(betL.text));
+                                playerToBet = (playerToBet + 1) % players.Count;
+                                betL.interactable = false;
+                            }
+                            else Debug.Log("Nano no apuestes tanto");
+
+                        }
+                    }
+                    break;
+                default:
+                    Debug.Log("betTime nunca llegar aqui");
+                    break;
             }
         } else
         {
-            Debug.Log("Ronda over");
+            //Debug.Log("betTime falsee");
+            if (!nextRound)
+            {
+                if (revisarJugada)
+                {
+                    //Debug.Log("revisaJugada");
+                    int nextPlayer = RevisarJugada(firstPlayer);
+                    revisarJugada = false;
+                    //Debug.Log("numTurns, numCards" + numTurns + ", " + numCards);
+                    if (numTurns != numCards) players[nextPlayer].StartTurn();
+                    if (numTurns == numCards)
+                    {
+                        ScoreBoard.GetInstance().UpdateScoreRound(actualRound);
+                        nextRound = true;
+                    }
+                }
+            }
+            else
+            {
+                Debug.Log("Ronda over");
+            }
         }
-		
 	}
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (!revisarJugada)
+        if (!revisarJugada && !betTime) // si no estamos revisando jugada ni apostando
         {
             if (auxCards < players.Count)
             {
@@ -254,7 +419,7 @@ public class CenterScript : MonoBehaviour {
         for (int i = 0; i<cards.Capacity; i++)
         {
             int index = (fp + i) % 4; // index del jugador apropiado
-            Debug.Log("index: " + index);
+            //Debug.Log("index: " + index);
             int auxRank = cards[i].GetRank();
             if (hasMuestra)
             {

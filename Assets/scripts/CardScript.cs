@@ -7,6 +7,9 @@ public class CardScript : MonoBehaviour {
     public int rank; // valor de la carta
     public char palo; // palo al que pertenece
     public int player; // jugador al que pertenece la carta
+    public Material greyScale;
+    public Material def;
+
 
     private SpriteRenderer mySpriteRenderer;
     private Sprite mySprite;
@@ -138,4 +141,13 @@ public class CardScript : MonoBehaviour {
         return rank;
     }
     
+    public void SetGreyMaterial()
+    {
+        GetComponent<SpriteRenderer>().material = greyScale;
+    }
+
+    public void SetDefMaterial()
+    {
+        GetComponent<SpriteRenderer>().material = def;
+    }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BoardScript : MonoBehaviour {
 
@@ -13,6 +14,10 @@ public class BoardScript : MonoBehaviour {
     public CenterScript center; // referencia al centro de mesa
     public int startPlayer;
 
+    public Text scoreD;
+    public Text scoreR;
+    public Text scoreU;
+    public Text scoreL;
 
     private Vector3 deckPosition = new Vector3(-3, 3, 0);
 
@@ -208,6 +213,15 @@ public class BoardScript : MonoBehaviour {
         }
         center.ReceiveMuestra(muestra);
         center.ReceiveRonda(actualRound, rounds[actualRound]);
+        center.playerToBet = startPlayer;
+        if (startPlayer == 0)
+        {
+            center.lastPlayerToBet = 3;
+        } else
+        {
+            center.lastPlayerToBet = (startPlayer - 1) % players.Count;
+        }
+        center.betTime = true;
         actualRound++; // TODO: Cambio de ronda
         foreach (PlayerScript player in players) player.OrderCards();
         for (int i = 0; i < players.Count; i++)
@@ -257,14 +271,27 @@ public class BoardScript : MonoBehaviour {
         {
             center.nextRound = false;
             center.ResetValues();
+            Debug.Log(ScoreBoard.GetInstance().WriteConsoleBets());
+            Debug.Log(ScoreBoard.GetInstance().WriteConsoleRoundsWon());
+            Debug.Log(ScoreBoard.GetInstance().WriteConsoleScore());
+            //ScoreBoard.GetInstance().UpdateScoreRound(actualRound);
+            UpdateScore();
             if (actualRound < rounds.Count)
             {
                 RepartirRonda();
             } else
             {
                 Debug.Log("ITS OVER");
+                Debug.Log(ScoreBoard.GetInstance().ToString());
             }
-            
         }
+    }
+
+    private void UpdateScore()
+    {
+        scoreD.text = ScoreBoard.GetInstance().ScorePlayer(0).ToString();
+        scoreR.text = ScoreBoard.GetInstance().ScorePlayer(1).ToString();
+        scoreU.text = ScoreBoard.GetInstance().ScorePlayer(2).ToString();
+        scoreL.text = ScoreBoard.GetInstance().ScorePlayer(3).ToString();
     }
 }
