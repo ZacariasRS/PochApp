@@ -7,12 +7,14 @@ public class BoardScript : MonoBehaviour {
 
     public GameObject card; // prefab usado para carta
     public List<GameObject> deck; // la baraja entera
-    public char muestra; // la muestra
+    public CardScript muestra; // la muestra
     public List<PlayerScript> players; // los jugadores
     public List<int> rounds; // cuantas cartas se reparten, numero de rondas
     public int actualRound; // la ronda actual
     public CenterScript center; // referencia al centro de mesa
     public int startPlayer;
+
+    public SpriteRenderer muestraSprite;
 
     public Text scoreD;
     public Text scoreR;
@@ -196,10 +198,11 @@ public class BoardScript : MonoBehaviour {
         
         if (cardsGiven.Count == 40)
         {
-            muestra = deck[cardsGiven[9]].GetComponent<CardScript>().GetPalo();
+            muestra = deck[cardsGiven[startPlayer*10+9]].GetComponent<CardScript>();
         }
         else
         {
+            aux = true;
             while (aux)
             {
                 numCard = Random.Range(0, 40);
@@ -209,11 +212,13 @@ public class BoardScript : MonoBehaviour {
                 }
             }
             auxCard = deck[numCard];
-            muestra = auxCard.GetComponent<CardScript>().GetPalo();
+            muestra = auxCard.GetComponent<CardScript>();
         }
+        muestraSprite.sprite = muestra.GetComponent<CardScript>().GetSprite();
         center.ReceiveMuestra(muestra);
         center.ReceiveRonda(actualRound, rounds[actualRound]);
         center.playerToBet = startPlayer;
+        center.playerToPlay = startPlayer;
         if (startPlayer == 0)
         {
             center.lastPlayerToBet = 3;
@@ -239,18 +244,17 @@ public class BoardScript : MonoBehaviour {
         PlayerScript[] auxPlayers = GetComponentsInChildren<PlayerScript>();
         for (int i = 0; i < 4; i++) players.Add(auxPlayers[i]);
         startPlayer = 0;
-
         //
         // rondas = new int[(40 / players.Count)+(players.Count - 1)];
         for (int i = 0; i < players.Count; i++) rounds.Add(1); // agregar tantas de 1 como jugadores
-        /*for (int i = 2; i <= (40/players.Count);i++) // agregar rondas intermedias
+        for (int i = 2; i <= (40/players.Count);i++) // agregar rondas intermedias
         {
             rounds.Add(i);
         }
         for (int i = 0; i < (players.Count - 1); i++) // agregar faltantes de la ultima ronda
         {
             rounds.Add(40 / players.Count);
-        }*/
+        }
         actualRound = 0;
         ScoreBoard.GetInstance().InitiateScoreBoard(rounds.Count, players.Count); // inicializamos el scoreBoard
         Debug.Log(ScoreBoard.GetInstance().ScoreSize());
@@ -261,6 +265,7 @@ public class BoardScript : MonoBehaviour {
     }
     // Use this for initialization
     void Start () {
+        Debug.Log(PlayerPrefs.GetInt("OrderCards"));
         InitializeDeck();
         RepartirRonda();
 	}
@@ -282,16 +287,15 @@ public class BoardScript : MonoBehaviour {
             } else
             {
                 Debug.Log("ITS OVER");
-                Debug.Log(ScoreBoard.GetInstance().ToString());
             }
         }
     }
 
     private void UpdateScore()
     {
-        scoreD.text = ScoreBoard.GetInstance().ScorePlayer(0).ToString();
-        scoreR.text = ScoreBoard.GetInstance().ScorePlayer(1).ToString();
-        scoreU.text = ScoreBoard.GetInstance().ScorePlayer(2).ToString();
-        scoreL.text = ScoreBoard.GetInstance().ScorePlayer(3).ToString();
+        scoreD.text = "Score: " + ScoreBoard.GetInstance().ScorePlayer(0).ToString();
+        scoreR.text = "Score: " + ScoreBoard.GetInstance().ScorePlayer(1).ToString();
+        scoreU.text = "Score: " + ScoreBoard.GetInstance().ScorePlayer(2).ToString();
+        scoreL.text = "Score: " + ScoreBoard.GetInstance().ScorePlayer(3).ToString();
     }
 }

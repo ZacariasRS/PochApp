@@ -9,6 +9,9 @@ public class CardScript : MonoBehaviour {
     public int player; // jugador al que pertenece la carta
     public Material greyScale;
     public Material def;
+    public int moving;
+    public int speed;
+
 
 
     private SpriteRenderer mySpriteRenderer;
@@ -20,6 +23,8 @@ public class CardScript : MonoBehaviour {
     private void Awake()
     {
         mySpriteRenderer = GetComponent<SpriteRenderer>();
+        moving = -1;
+        speed = 4;
     }
     // Use this for initialization
     void Start () {
@@ -29,7 +34,27 @@ public class CardScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
+		switch (moving)
+        {
+            case -1:
+                break;
+            case 0:
+                transform.rotation = Quaternion.Euler(0, 0, 0);
+                transform.Translate(Vector3.down * speed * Time.deltaTime);
+                break;
+            case 1:
+                transform.rotation = Quaternion.Euler(0, 0, 0);
+                transform.Translate(Vector3.right * speed * Time.deltaTime);
+                break;
+            case 2:
+                transform.rotation = Quaternion.Euler(0, 0, 0);
+                transform.Translate(Vector3.up * speed * Time.deltaTime);
+                break;
+            case 3:
+                transform.rotation = Quaternion.Euler(0, 0, 0);
+                transform.Translate(Vector3.left * speed * Time.deltaTime);
+                break;
+        }
 	}
 
     private void OnMouseDown()
@@ -105,9 +130,33 @@ public class CardScript : MonoBehaviour {
         else Debug.Log("Hide Card: mySpriteRenderer == null");
     }
 
-    public void EnterCenter()
+    public void EnterCenter(bool imP)
     {
-        transform.localScale -= new Vector3(1.0f, 1.0f, 0);
+        if (imP)
+        {
+            Debug.Log("ImPlayer Scale down");
+            transform.localScale -= new Vector3(1.0f, 1.0f, 0);
+        } else
+        {
+            mySpriteRenderer.sprite = mySprite;
+        }
+        switch(player)
+        {
+            case 0:
+                transform.position = new Vector3(0f, -1.75f, -3f);
+                break;
+            case 1:
+                transform.position = new Vector3(2.75f, 0f, -3f);
+                break;
+            case 2:
+                transform.position = new Vector3(0f, 1.75f, -3f);
+                break;
+            case 3:
+                transform.position = new Vector3(-2.75f, 0f, -3f);
+                break;
+            default:
+                break;
+        }
         alreadyClicked = false;
         inCenter = true;
     }
@@ -149,5 +198,10 @@ public class CardScript : MonoBehaviour {
     public void SetDefMaterial()
     {
         GetComponent<SpriteRenderer>().material = def;
+    }
+    
+    public Sprite GetSprite()
+    {
+        return mySprite;
     }
 }

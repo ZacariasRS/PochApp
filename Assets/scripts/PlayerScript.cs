@@ -15,24 +15,7 @@ public class PlayerScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-
-        //OrderCards();
-        /*
-		if (!myTurn)
-        {
-            foreach (GameObject card in cards)
-            {
-                card.GetComponent<BoxCollider2D>().enabled = false;
-            }
-        }
-        else
-        {
-            foreach (GameObject card in cards)
-            {
-                card.GetComponent<BoxCollider2D>().enabled = true; // TODO: hacerlo en Stop/StartTurn??
-            }
-        }
-        */
+        
 	}
 
     public void AddCard(GameObject card)
@@ -48,7 +31,7 @@ public class PlayerScript : MonoBehaviour {
         cards.Remove(card);
     }
 
-    public void OrderCards()
+    public void OrderCards() // TODO: Usar PlayerPref("OrderCards") para ordenar por palos
     {
         if (cards.Count > 0)
         {
@@ -123,5 +106,112 @@ public class PlayerScript : MonoBehaviour {
             }
         }
         return res;
+    }
+
+    public void PlayCard(char pi, int hr, bool hm, int rm, char m)
+    {
+        if (!imPlayer && myTurn)
+        {
+            GameObject cardToPlay = null;
+            if (cards.Count > 0)
+            {
+                if (HasPalo(pi)) // Si tengo del palo inicial
+                {
+                    for (int i = 0; i < cards.Count; i++)
+                    {
+                        if (cards[i].GetComponent<CardScript>().GetPalo() == pi) // busco en las cartas
+                        {
+                            if (cardToPlay == null) // si aun no he elegido ninguna, la primera del palo
+                            {
+                                cardToPlay = cards[i];
+                            }
+                            else // ya habia escogido una
+                            {
+                                if (cardToPlay.GetComponent<CardScript>().GetRank() < cards[i].GetComponent<CardScript>().GetRank()) // si es mas grande, actualiza
+                                {
+                                    cardToPlay = cards[i];
+                                }
+                            }
+                        }
+                    }
+                }
+                else // no tengo del palo inicial
+                {
+                    if (HasPalo(m)) // si tengo muestra, tiro la mas grande
+                    {
+                        for (int i = 0; i < cards.Count; i++)
+                        {
+                            if (cards[i].GetComponent<CardScript>().GetPalo() == m) // busco en las cartas
+                            {
+                                if (cardToPlay == null) // si aun no he elegido ninguna, la primera del palo
+                                {
+                                    cardToPlay = cards[i];
+                                }
+                                else // ya habia escogido una
+                                {
+                                    if (cardToPlay.GetComponent<CardScript>().GetRank() < cards[i].GetComponent<CardScript>().GetRank()) // si es mas grande, actualiza
+                                    {
+                                        cardToPlay = cards[i];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else // si no tengo inicial ni muestra, tiro la primera
+                    {
+                        cardToPlay = cards[0];
+                    }
+                }
+            }
+            if (cardToPlay == null)
+            {
+                Debug.Log("El bot la ha liado");
+            }
+            else
+            {
+                cardToPlay.transform.position = new Vector3(0f, 0f, -3f);
+            }
+        }
+    }
+
+    public int Bet(char m)
+    {
+        int bet = 0;
+        if (cards.Count == 1 && myTurn)
+        {
+            return 1;
+        }
+        if (cards.Count == 1 && !myTurn)
+        {
+            if (cards[0].GetComponent<CardScript>().GetPalo() == m) return 1;
+            else return 0;
+        }
+        if (cards.Count > 1)
+        {
+            foreach (GameObject card in cards)
+            {
+                if (card.GetComponent<CardScript>().GetPalo() == m)
+                {
+                    bet++;
+                }
+            }
+        }
+        return bet;
+    }
+
+    public void SetAllCardGrey()
+    {
+        foreach (GameObject card in cards)
+        {
+            card.GetComponent<CardScript>().SetGreyMaterial();
+        }
+    }
+
+    public void SetAllCardNormal()
+    {
+        foreach (GameObject card in cards)
+        {
+            card.GetComponent<CardScript>().SetDefMaterial();
+        }
     }
 }

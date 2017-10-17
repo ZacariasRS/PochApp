@@ -58,9 +58,9 @@ public class ScoreBoard
         scoreBoardContent[r, p].roundsWon = rw;
     }
 
-    public void IncrementRoundsWonRoundPlayer(int r, int p)
+    public int IncrementRoundsWonRoundPlayer(int r, int p)
     {
-        scoreBoardContent[r, p].roundsWon++;
+        return ++scoreBoardContent[r, p].roundsWon;
     }
 
     public void CalculateScore(int r, int p)

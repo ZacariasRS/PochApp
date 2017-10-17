@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class CenterScript : MonoBehaviour {
 
@@ -24,11 +25,24 @@ public class CenterScript : MonoBehaviour {
     public bool betTime;
     public int playerToBet;
     public int lastPlayerToBet;
+    public bool deleteCards;
+    public int playerToPlay;
+    public bool botPlay;
+    public int playerWonRound;
+    public bool botBet;
 
     public InputField betD;
     public InputField betR;
     public InputField betU;
     public InputField betL;
+    //public Text uiMuestra;
+    public Text roundsWonD;
+    public Text roundsWonR;
+    public Text roundsWonU;
+    public Text roundsWonL;
+    public Text warning;
+
+
     
 
 
@@ -38,9 +52,25 @@ public class CenterScript : MonoBehaviour {
         players = p;
     }
 
-    public void ReceiveMuestra(char m)
+    public void ReceiveMuestra(CardScript csm)
     {
-        muestra = m;
+        /*muestra = csm.GetPalo();
+        switch (muestra)
+        {
+            case 'o':
+                uiMuestra.text = "Muestra: " + csm.GetRank() + " Oros";
+                break;
+            case 'e':
+                uiMuestra.text = "Muestra: " + csm.GetRank() + " Espadas";
+                break;
+            case 'c':
+                uiMuestra.text = "Muestra: " + csm.GetRank() + " Copas";
+                break;
+            case 'b':
+                uiMuestra.text = "Muestra: " + csm.GetRank() + " Bastos";
+                break;
+        }
+        */
     }
 
     public void ReceiveRonda(int r, int nc)
@@ -55,6 +85,10 @@ public class CenterScript : MonoBehaviour {
         betU.interactable = false;
         betL.interactable = false;
         playerToBet = 0;
+        deleteCards = true;
+        botPlay = true;
+        botBet = true;
+        warning.enabled = true;
     }
     // Use this for initialization
     void Start () {
@@ -75,7 +109,9 @@ public class CenterScript : MonoBehaviour {
             switch(playerToBet)
             {
                 case 0:
+                    players[0].SetAllCardNormal();
                     betD.interactable = true;
+                    EventSystem.current.SetSelectedGameObject(betD.gameObject);
                     if (betD.isFocused && Input.GetKeyDown(KeyCode.UpArrow))
                     {
                         if (playerToBet == lastPlayerToBet)
@@ -84,29 +120,39 @@ public class CenterScript : MonoBehaviour {
                             {
                                 if (int.Parse(betD.text) + ScoreBoard.GetInstance().SumOfBetsOfRound(actualRound) != numCards)
                                 {
+                                    warning.text = "";
                                     ScoreBoard.GetInstance().SetBetRoundPlayer(actualRound, playerToBet, int.Parse(betD.text)); // TODO: no se puede apostar el mismo numero de cartas repartidas
                                     betD.interactable = false;
                                     playerToBet = -1;
                                     lastPlayerToBet = -1;
                                     betTime = false;
+                                    if (!players[0].myTurn)
+                                    {
+                                        players[0].SetAllCardGrey();
+                                    }
                                 }
-                                else Debug.Log("No puedes apostar eso");
+                                else warning.text = "No puedes apostar eso";
                             } 
-                            else Debug.Log("Nano no apuestes tanto");
+                            else warning.text = "Nano no apuestes tanto";
                         } else
                         {
                             if (int.Parse(betD.text) <= numCards)
                             {
+                                warning.text = "";
                                 ScoreBoard.GetInstance().SetBetRoundPlayer(actualRound, playerToBet, int.Parse(betD.text));
                                 playerToBet = (playerToBet + 1) % players.Count;
                                 betD.interactable = false;
+                                if (!players[0].myTurn)
+                                {
+                                    players[0].SetAllCardGrey();
+                                }
                             }
-                            else Debug.Log("Nano no apuestes tanto");
-                            
+                            else warning.text = "Nano no apuestes tanto";
                         }
                     }
                     break;
                 case 1:
+                    /*
                     betR.interactable = true;
                     if (betR.isFocused && Input.GetKeyDown(KeyCode.UpArrow))
                     {
@@ -116,31 +162,36 @@ public class CenterScript : MonoBehaviour {
                             {
                                 if (int.Parse(betR.text) + ScoreBoard.GetInstance().SumOfBetsOfRound(actualRound) != numCards)
                                 {
+                                    warning.text = "";
                                     ScoreBoard.GetInstance().SetBetRoundPlayer(actualRound, playerToBet, int.Parse(betR.text)); // TODO: no se puede apostar el mismo numero de cartas repartidas
                                     betR.interactable = false;
                                     playerToBet = -1;
                                     lastPlayerToBet = -1;
                                     betTime = false;
                                 }
-                                else Debug.Log("No puedes apostar eso");
+                                else warning.text = "No puedes apostar eso";
                             }
-                            else Debug.Log("Nano no apuestes tanto");
+                            else warning.text = "Nano no apuestes tanto";
                         }
                         else
                         {
                             if (int.Parse(betR.text) <= numCards)
                             {
+                                warning.text = "";
                                 ScoreBoard.GetInstance().SetBetRoundPlayer(actualRound, playerToBet, int.Parse(betR.text));
                                 playerToBet = (playerToBet + 1) % players.Count;
                                 betR.interactable = false;
                             }
-                            else Debug.Log("Nano no apuestes tanto");
+                            else warning.text = "Nano no apuestes tanto";
 
                         }
                     }
                     break;
+                    */
+                    if (botBet) StartCoroutine(BotWaitBet(1f));
+                    break;
                 case 2:
-                    betU.interactable = true;
+                    /*betU.interactable = true;
                     if (betU.isFocused && Input.GetKeyDown(KeyCode.UpArrow))
                     {
                         if (playerToBet == lastPlayerToBet)
@@ -149,31 +200,36 @@ public class CenterScript : MonoBehaviour {
                             {
                                 if (int.Parse(betU.text) + ScoreBoard.GetInstance().SumOfBetsOfRound(actualRound) != numCards)
                                 {
+                                    warning.text = "";
                                     ScoreBoard.GetInstance().SetBetRoundPlayer(actualRound, playerToBet, int.Parse(betU.text)); // TODO: no se puede apostar el mismo numero de cartas repartidas
                                     betU.interactable = false;
                                     playerToBet = -1;
                                     lastPlayerToBet = -1;
                                     betTime = false;
                                 }
-                                else Debug.Log("No puedes apostar eso");
+                                else warning.text = "No puedes apostar eso";
                             }
-                            else Debug.Log("Nano no apuestes tanto");
+                            else warning.text = "Nano no apuestes tanto";
                         }
                         else
                         {
                             if (int.Parse(betU.text) <= numCards)
                             {
+                                warning.text = "";
                                 ScoreBoard.GetInstance().SetBetRoundPlayer(actualRound, playerToBet, int.Parse(betU.text));
                                 playerToBet = (playerToBet + 1) % players.Count;
                                 betU.interactable = false;
                             }
-                            else Debug.Log("Nano no apuestes tanto");
+                            else warning.text = "Nano no apuestes tanto";
 
                         }
                     }
                     break;
+                    */
+                    if (botBet) StartCoroutine(BotWaitBet(1f));
+                    break;
                 case 3:
-                    betL.interactable = true;
+                    /*betL.interactable = true;
                     if (betL.isFocused && Input.GetKeyDown(KeyCode.UpArrow))
                     {
                         if (playerToBet == lastPlayerToBet)
@@ -182,28 +238,31 @@ public class CenterScript : MonoBehaviour {
                             {
                                 if (int.Parse(betL.text) + ScoreBoard.GetInstance().SumOfBetsOfRound(actualRound) != numCards)
                                 {
+                                    warning.text = "";
                                     ScoreBoard.GetInstance().SetBetRoundPlayer(actualRound, playerToBet, int.Parse(betL.text)); // TODO: no se puede apostar el mismo numero de cartas repartidas
                                     betL.interactable = false;
                                     playerToBet = -1;
                                     lastPlayerToBet = -1;
                                     betTime = false;
                                 }
-                                else Debug.Log("No puedes apostar eso");
+                                else warning.text = "No puedes apostar eso";
                             }
-                            else Debug.Log("Nano no apuestes tanto");
+                            else warning.text = "Nano no apuestes tanto";
                         }
                         else
                         {
                             if (int.Parse(betL.text) <= numCards)
                             {
+                                warning.text = "";
                                 ScoreBoard.GetInstance().SetBetRoundPlayer(actualRound, playerToBet, int.Parse(betL.text));
                                 playerToBet = (playerToBet + 1) % players.Count;
                                 betL.interactable = false;
                             }
-                            else Debug.Log("Nano no apuestes tanto");
-
+                            else warning.text = "Nano no apuestes tanto";
                         }
                     }
+                    break;*/
+                    if (botBet) StartCoroutine(BotWaitBet(1f));
                     break;
                 default:
                     Debug.Log("betTime nunca llegar aqui");
@@ -217,15 +276,20 @@ public class CenterScript : MonoBehaviour {
                 if (revisarJugada)
                 {
                     //Debug.Log("revisaJugada");
-                    int nextPlayer = RevisarJugada(firstPlayer);
-                    revisarJugada = false;
-                    //Debug.Log("numTurns, numCards" + numTurns + ", " + numCards);
-                    if (numTurns != numCards) players[nextPlayer].StartTurn();
-                    if (numTurns == numCards)
+                    if (deleteCards) StartCoroutine(Wait(2));
+                    /*if (deleteCards)
                     {
-                        ScoreBoard.GetInstance().UpdateScoreRound(actualRound);
-                        nextRound = true;
+                        int nextPlayer = RevisarJugada(firstPlayer);
+                        revisarJugada = false;
+                        //Debug.Log("numTurns, numCards" + numTurns + ", " + numCards);
+                        if (numTurns != numCards) players[nextPlayer].StartTurn();
+                        if (numTurns == numCards)
+                        {
+                            ScoreBoard.GetInstance().UpdateScoreRound(actualRound);
+                            nextRound = true;
+                        }
                     }
+                    */
                 }
             }
             else
@@ -233,7 +297,22 @@ public class CenterScript : MonoBehaviour {
                 Debug.Log("Ronda over");
             }
         }
+        if (!players[playerToPlay].imPlayer && !betTime)
+        {
+            if(players[playerToPlay].myTurn)
+            {
+                if (botPlay)
+                {
+                    StartCoroutine(PlayerWaitPlayCard(0.5f));
+                }
+            }
+        }
 	}
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        warning.text = "";
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -258,7 +337,7 @@ public class CenterScript : MonoBehaviour {
                         higherRank = cardRank;
                         //if (card.GetPalo() == muestra) hayMuestra = true;
                         firstPlayer = cardPlayer;
-                        card.EnterCenter();
+                        card.EnterCenter(players[cardPlayer].imPlayer);
                         pasarTurno = true;
                         cards.Add(card);
                     }
@@ -274,7 +353,7 @@ public class CenterScript : MonoBehaviour {
                                 if (cardRank > higherRank) // si la carta es de mayor rango que todas
                                 {
                                     //Debug.Log("Tiene palo inicio y la carta es mayor que la actual o hay muestra");
-                                    card.EnterCenter();
+                                    card.EnterCenter(players[cardPlayer].imPlayer);
                                     higherRank = cardRank;
                                     pasarTurno = true;
                                     cards.Add(card);
@@ -287,11 +366,13 @@ public class CenterScript : MonoBehaviour {
                                         if (!hayMuestra)
                                         {
                                             //Debug.Log("Tiene una carta mas grande y no hay muestra en mesa");
+                                            warning.text = "Tiene una carta mas grande y no hay muestra en mesa";
+                                            warning.enabled = true;
                                             card.ReturnToInitialPosition();
                                         } else
                                         {
                                             //Debug.Log("Tiene una carta mas grande pero hay muestra en la mesa");
-                                            card.EnterCenter();
+                                            card.EnterCenter(players[cardPlayer].imPlayer);
                                             pasarTurno = true;
                                             cards.Add(card);
                                         }
@@ -300,7 +381,7 @@ public class CenterScript : MonoBehaviour {
                                     else
                                     {
                                         //Debug.Log("No tiene una carta mas grande");
-                                        card.EnterCenter();
+                                        card.EnterCenter(players[cardPlayer].imPlayer);
                                         pasarTurno = true;
                                         cards.Add(card);
                                     }
@@ -308,6 +389,8 @@ public class CenterScript : MonoBehaviour {
                             } else
                             {
                                 //Debug.Log("Tiene palo inicio y juega otro palo");
+                                warning.text = "Tiene palo inicio y juega otro palo";
+                                warning.enabled = true;
                                 card.ReturnToInitialPosition();
                             }
                         } else // No tiene palo de inicio
@@ -326,24 +409,28 @@ public class CenterScript : MonoBehaviour {
                                             if (cardRank > rankMuestra)
                                             {
                                                 //Debug.Log("Tiene muestra y hay muestra en mesa y tenemos una mas grande y la jugamos");
-                                                card.EnterCenter();
+                                                card.EnterCenter(players[cardPlayer].imPlayer);
                                                 pasarTurno = true;
                                                 rankMuestra = cardRank;
                                                 cards.Add(card);
                                             } else
                                             {
                                                 //Debug.Log("Tiene muestra y hay muestra en mesa y tenemos una mas grande y no la jugamos");
+                                                warning.text = "Tiene muestra y hay muestra en mesa y tenemos una mas grande y no la jugamos";
+                                                warning.enabled = true;
                                                 card.ReturnToInitialPosition();
                                             }
                                         } else
                                         {
                                             //Debug.Log("Tiene muestra y hay muestra en mesa y tenemos una mas grande y no juega muestra");
+                                            warning.text = "Tiene muestra y hay muestra en mesa y tenemos una mas grande y no juega muestra";
+                                            warning.enabled = true;
                                             card.ReturnToInitialPosition();
                                         }
                                     } else
                                     {
                                         //Debug.Log("Tiene muestra y hay muestra en mesa y no tiene una mas grande");
-                                        card.EnterCenter();
+                                        card.EnterCenter(players[cardPlayer].imPlayer);
                                         pasarTurno = true;
                                         cards.Add(card);
                                     }
@@ -353,7 +440,7 @@ public class CenterScript : MonoBehaviour {
                                     if (cardPalo == muestra)
                                     {
                                         //Debug.Log("Tiene muestra y No hay muestra en la mesa y tenemos muestra y la carta es muestra");
-                                        card.EnterCenter();
+                                        card.EnterCenter(players[cardPlayer].imPlayer);
                                         pasarTurno = true;
                                         hayMuestra = true;
                                         rankMuestra = cardRank;
@@ -361,13 +448,15 @@ public class CenterScript : MonoBehaviour {
                                     } else
                                     {
                                         //Debug.Log("No hay muestra en la mesa tenemos muestra y la carta no es muestra");
+                                        warning.text = "No hay muestra en la mesa tenemos muestra y la carta no es muestra";
+                                        warning.enabled = true;
                                         card.ReturnToInitialPosition();
                                     }
                                 }
                             } else // No tiene palo inicio ni muestra, puede echar cualquiera
                             {
                                 //Debug.Log("No tiene palo inicio y no tiene muestra");
-                                card.EnterCenter();
+                                card.EnterCenter(players[cardPlayer].imPlayer);
                                 pasarTurno = true;
                                 cards.Add(card);
                             }
@@ -394,12 +483,14 @@ public class CenterScript : MonoBehaviour {
                         {
                             players[auxPlayer].StopTurn();
                             players[0].StartTurn();
+                            playerToPlay = 0;
                         }
                         else
                         {
                             //Debug.Log(auxPlayer);
                             players[auxPlayer].StopTurn();
                             ++auxPlayer;
+                            playerToPlay = auxPlayer;
                             //Debug.Log(auxPlayer);
                             players[auxPlayer].StartTurn();
                         }
@@ -444,15 +535,17 @@ public class CenterScript : MonoBehaviour {
                     }
                 }
             }
-            cards[i].HideCard();
+            //cards[i].HideCard();
         }
         Debug.Log("PlayerWinner: " + playerWinner);
-        ScoreBoard.GetInstance().IncrementRoundsWonRoundPlayer(actualRound, playerWinner); // TODO: Usar esto para hacer el score
+        int roundsWonByPlayerWinner = ScoreBoard.GetInstance().IncrementRoundsWonRoundPlayer(actualRound, playerWinner); // TODO: Usar esto para hacer el score
+        UpdateRoundsWon(playerWinner, roundsWonByPlayerWinner);
         numTurns++;
         // TODO: Maybe meterlo en una funcion
-        cards.Clear();
+        //cards.Clear();
         hayMuestra = false;
         rankMuestra = 0;
+        higherRank = 0;
         //
         GetComponent<BoxCollider2D>().enabled = true;
         return playerWinner;
@@ -468,11 +561,143 @@ public class CenterScript : MonoBehaviour {
         hayMuestra = false; // TODO: ¿Es necesario?
         rankMuestra = 0; // TODO: ¿Es necesario?
         numTurns = 0; // TODO: ¿Es necesario?
+        betD.text = "";
+        betR.text = "";
+        betU.text = "";
+        betL.text = "";
+        roundsWonD.text = "Rondas ganadas: 0";
+        roundsWonR.text = "Rondas ganadas: 0";
+        roundsWonU.text = "Rondas ganadas: 0";
+        roundsWonL.text = "Rondas ganadas: 0";
         nextRound = false;
     }
 
     public bool NeedNextRound()
     {
         return nextRound;
+    }
+
+    public IEnumerator Wait(float seconds)
+    {
+        //Debug.Log(Time.time);
+        deleteCards = false;
+        int nextPlayer = RevisarJugada(firstPlayer);
+        playerToPlay = nextPlayer;
+        playerWonRound = nextPlayer;
+        yield return new WaitForSeconds(0.5f);
+        foreach (CardScript card in cards)
+        {
+            card.moving = nextPlayer;
+        }
+        yield return new WaitForSeconds(seconds);
+        foreach (CardScript card in cards)
+        {
+            card.moving = -1;
+            card.HideCard();
+        }
+        cards.Clear();
+        revisarJugada = false;
+        //Debug.Log("numTurns, numCards" + numTurns + ", " + numCards);
+        if (numTurns != numCards) players[nextPlayer].StartTurn();
+        if (numTurns == numCards)
+        {
+            ScoreBoard.GetInstance().UpdateScoreRound(actualRound);
+            nextRound = true;
+        }
+        deleteCards = true;
+        //Debug.Log(Time.time);
+    }
+
+    public IEnumerator PlayerWaitPlayCard(float seconds)
+    {
+        botPlay = false;
+        yield return new WaitForSeconds(seconds);
+        players[playerToPlay].PlayCard(paloInicio, higherRank, hayMuestra, rankMuestra, muestra);
+        botPlay = true;
+    }
+
+    public IEnumerator BotWaitBet(float seconds)
+    {
+        botBet = false;
+        if (playerToBet == lastPlayerToBet)
+        {
+            warning.text = "";
+            int bet = players[playerToBet].Bet(muestra);
+            if ((numCards - ScoreBoard.GetInstance().SumOfBetsOfRound(actualRound)) == bet)
+            {
+                if ((bet - 1) >= 0)
+                {
+                    bet = 0;
+                }
+                else bet++;
+            }
+            ScoreBoard.GetInstance().SetBetRoundPlayer(actualRound, playerToBet, bet); // TODO: no se puede apostar el mismo numero de cartas repartidas
+            switch (playerToBet)
+            {
+                case 0:
+                    break;
+                case 1:
+                    betR.text = bet.ToString();
+                    betR.interactable = false;
+                    break;
+                case 2:
+                    betU.text = bet.ToString();
+                    betU.interactable = false;
+                    break;
+                case 3:
+                    betL.text = bet.ToString();
+                    betL.interactable = false;
+                    break;
+            }
+            playerToBet = -1;
+            lastPlayerToBet = -1;
+            betTime = false;
+        }
+        else
+        {
+            warning.text = "";
+            int bet = players[playerToBet].Bet(muestra);
+            ScoreBoard.GetInstance().SetBetRoundPlayer(actualRound, playerToBet, bet);
+            switch (playerToBet)
+            {
+                case 0:
+                    break;
+                case 1:
+                    betR.text = bet.ToString();
+                    betR.interactable = false;
+                    break;
+                case 2:
+                    betU.text = bet.ToString();
+                    betU.interactable = false;
+                    break;
+                case 3:
+                    betL.text = bet.ToString();
+                    betL.interactable = false;
+                    break;
+            }
+            playerToBet = (playerToBet + 1) % players.Count;
+            betR.interactable = false;
+        }
+        yield return new WaitForSeconds(seconds);
+        botBet = true;
+    }
+
+    private void UpdateRoundsWon(int p, int rw)
+    {
+        switch(p)
+        {
+            case 0:
+                roundsWonD.text = "Rondas ganadas: " + rw.ToString();
+                break;
+            case 1:
+                roundsWonR.text = "Rondas ganadas: " + rw.ToString();
+                break;
+            case 2:
+                roundsWonU.text = "Rondas ganadas: " + rw.ToString();
+                break;
+            case 3:
+                roundsWonL.text = "Rondas ganadas: " + rw.ToString();
+                break;
+        }
     }
 }
