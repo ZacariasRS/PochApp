@@ -115,6 +115,11 @@ public class ScoreBoard
         return scoreBoardContent[r, p].bet;
     }
 
+    public int GetRoundsWon(int r, int p)
+    {
+        return scoreBoardContent[r, p].roundsWon;
+    }
+
     public string WriteConsoleBets()
     {
         string s = "";

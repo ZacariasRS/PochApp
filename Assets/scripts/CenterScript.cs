@@ -54,6 +54,7 @@ public class CenterScript : MonoBehaviour {
 
     public void ReceiveMuestra(CardScript csm)
     {
+        muestra = csm.GetPalo();
         /*muestra = csm.GetPalo();
         switch (muestra)
         {
@@ -109,10 +110,11 @@ public class CenterScript : MonoBehaviour {
             switch(playerToBet)
             {
                 case 0:
+                    if (warning.text == "") warning.text = "Introduzca su apuesta\n(pulse 'Enter bet...')" ;
                     players[0].SetAllCardNormal();
                     betD.interactable = true;
-                    EventSystem.current.SetSelectedGameObject(betD.gameObject);
-                    if (betD.isFocused && Input.GetKeyDown(KeyCode.UpArrow))
+                    //EventSystem.current.SetSelectedGameObject(betD.gameObject);
+                    if (betD.isFocused/* && Input.GetKeyDown(KeyCode.UpArrow)*/ && betD.text != "")
                     {
                         if (playerToBet == lastPlayerToBet)
                         {
@@ -121,7 +123,7 @@ public class CenterScript : MonoBehaviour {
                                 if (int.Parse(betD.text) + ScoreBoard.GetInstance().SumOfBetsOfRound(actualRound) != numCards)
                                 {
                                     warning.text = "";
-                                    ScoreBoard.GetInstance().SetBetRoundPlayer(actualRound, playerToBet, int.Parse(betD.text)); // TODO: no se puede apostar el mismo numero de cartas repartidas
+                                    ScoreBoard.GetInstance().SetBetRoundPlayer(actualRound, playerToBet, int.Parse(betD.text)); // 
                                     betD.interactable = false;
                                     playerToBet = -1;
                                     lastPlayerToBet = -1;
@@ -538,7 +540,7 @@ public class CenterScript : MonoBehaviour {
             //cards[i].HideCard();
         }
         Debug.Log("PlayerWinner: " + playerWinner);
-        int roundsWonByPlayerWinner = ScoreBoard.GetInstance().IncrementRoundsWonRoundPlayer(actualRound, playerWinner); // TODO: Usar esto para hacer el score
+        int roundsWonByPlayerWinner = ScoreBoard.GetInstance().IncrementRoundsWonRoundPlayer(actualRound, playerWinner); 
         UpdateRoundsWon(playerWinner, roundsWonByPlayerWinner);
         numTurns++;
         // TODO: Maybe meterlo en una funcion
@@ -584,6 +586,7 @@ public class CenterScript : MonoBehaviour {
         int nextPlayer = RevisarJugada(firstPlayer);
         playerToPlay = nextPlayer;
         playerWonRound = nextPlayer;
+        paloInicio = 'n';
         yield return new WaitForSeconds(0.5f);
         foreach (CardScript card in cards)
         {
@@ -612,7 +615,7 @@ public class CenterScript : MonoBehaviour {
     {
         botPlay = false;
         yield return new WaitForSeconds(seconds);
-        players[playerToPlay].PlayCard(paloInicio, higherRank, hayMuestra, rankMuestra, muestra);
+        players[playerToPlay].PlayCard(paloInicio, higherRank, hayMuestra, rankMuestra, muestra, ScoreBoard.GetInstance().GetRoundsWon(actualRound, playerToPlay));
         botPlay = true;
     }
 
@@ -631,7 +634,7 @@ public class CenterScript : MonoBehaviour {
                 }
                 else bet++;
             }
-            ScoreBoard.GetInstance().SetBetRoundPlayer(actualRound, playerToBet, bet); // TODO: no se puede apostar el mismo numero de cartas repartidas
+            ScoreBoard.GetInstance().SetBetRoundPlayer(actualRound, playerToBet, bet); 
             switch (playerToBet)
             {
                 case 0:

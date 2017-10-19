@@ -20,6 +20,8 @@ public class BoardScript : MonoBehaviour {
     public Text scoreR;
     public Text scoreU;
     public Text scoreL;
+    public Text roundsPlayed;
+    public Text cardsDealed;
 
     private Vector3 deckPosition = new Vector3(-3, 3, 0);
 
@@ -172,7 +174,8 @@ public class BoardScript : MonoBehaviour {
         GameObject auxCard = null;
         bool aux = true;
         int numCard = 0;
-
+        UpdateRoundsPlayed();
+        UpdateCardsDealed();
         for (int i=0;i<players.Count;i++)
         {
             //Debug.Log("i = " + i);
@@ -198,7 +201,15 @@ public class BoardScript : MonoBehaviour {
         
         if (cardsGiven.Count == 40)
         {
-            muestra = deck[cardsGiven[startPlayer*10+9]].GetComponent<CardScript>();
+            int playerMuestra;
+            if (startPlayer == 0)
+            {
+                playerMuestra = 3;
+            } else
+            {
+                playerMuestra = startPlayer - 1;
+            }
+            muestra = deck[cardsGiven[playerMuestra*10+9]].GetComponent<CardScript>(); // TODO: La muestra es del que reparte, no el que empieza (es decir, el anterior al startPlayer)
         }
         else
         {
@@ -227,8 +238,15 @@ public class BoardScript : MonoBehaviour {
             center.lastPlayerToBet = (startPlayer - 1) % players.Count;
         }
         center.betTime = true;
-        actualRound++; // TODO: Cambio de ronda
-        foreach (PlayerScript player in players) player.OrderCards();
+        actualRound++;
+        if (PlayerPrefs.GetInt("OrderCards") == 1)
+        {
+            foreach (PlayerScript player in players) player.OrderCards(muestra.GetPalo()); // TODO: usar muestra
+        }
+        else
+        {
+            foreach (PlayerScript player in players) player.OrderCards();
+        }
         for (int i = 0; i < players.Count; i++)
         {
             if (i == startPlayer) players[startPlayer].StartTurn();
@@ -261,6 +279,7 @@ public class BoardScript : MonoBehaviour {
         //
         center = GetComponentInChildren<CenterScript>();
         center.AddPlayers(players);
+        //
 
     }
     // Use this for initialization
@@ -287,6 +306,7 @@ public class BoardScript : MonoBehaviour {
             } else
             {
                 Debug.Log("ITS OVER");
+                //UnityEngine.SceneManagement.SceneManager.LoadScene("menu");
             }
         }
     }
@@ -297,5 +317,15 @@ public class BoardScript : MonoBehaviour {
         scoreR.text = "Score: " + ScoreBoard.GetInstance().ScorePlayer(1).ToString();
         scoreU.text = "Score: " + ScoreBoard.GetInstance().ScorePlayer(2).ToString();
         scoreL.text = "Score: " + ScoreBoard.GetInstance().ScorePlayer(3).ToString();
+    }
+
+    public void UpdateRoundsPlayed()
+    {
+        roundsPlayed.text = "Rondas: " + (actualRound + 1) + "/" + rounds.Count;
+    }
+    
+    public void UpdateCardsDealed()
+    {
+        cardsDealed.text = "Repartido " + rounds[actualRound] + " cartas.";
     }
 }

@@ -6,11 +6,11 @@ PlayerSettings:
   serializedVersion: 12
   productGUID: a64bce1296d308e448d07ff5b045524a
   AndroidProfiler: 0
-  defaultScreenOrientation: 4
+  defaultScreenOrientation: 2
   targetDevice: 2
   useOnDemandResources: 0
   accelerometerFrequency: 60
-  companyName: DefaultCompany
+  companyName: zakirs
   productName: PochApp
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
@@ -138,14 +138,15 @@ PlayerSettings:
       depthFormat: 1
   protectGraphicsMemory: 0
   useHDRDisplay: 0
-  targetPixelDensity: 0
+  targetPixelDensity: 200
   resolutionScalingMode: 0
-  applicationIdentifier: {}
+  applicationIdentifier:
+    Android: com.zakirs.PochApp
   buildNumber: {}
   AndroidBundleVersionCode: 1
   AndroidMinSdkVersion: 16
   AndroidTargetSdkVersion: 0
-  AndroidPreferredInstallLocation: 1
+  AndroidPreferredInstallLocation: 0
   aotOptions: 
   stripEngineCode: 1
   iPhoneStrippingLevel: 0
@@ -499,7 +500,8 @@ PlayerSettings:
   webGLUseEmbeddedResources: 0
   webGLUseWasm: 0
   webGLCompressionFormat: 1
-  scriptingDefineSymbols: {}
+  scriptingDefineSymbols:
+    1: 
   platformArchitecture: {}
   scriptingBackend: {}
   incrementalIl2cppBuild: {}
