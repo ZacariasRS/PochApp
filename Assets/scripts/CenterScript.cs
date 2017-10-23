@@ -22,6 +22,7 @@ public class CenterScript : MonoBehaviour {
     public int rankMuestra; // el rango de la muestra en mesa
     public int firstPlayer; // el index del jugador que empieza la jugada
     public bool nextRound; // se pide a board que reparta la siguiente ronda
+    public bool showScore; // se pide que se enseñe score
     public bool betTime;
     public int playerToBet;
     public int lastPlayerToBet;
@@ -36,6 +37,7 @@ public class CenterScript : MonoBehaviour {
     public InputField betR;
     public InputField betU;
     public InputField betL;
+
     //public Text uiMuestra;
     public Text roundsWonD;
     public Text roundsWonR;
@@ -50,6 +52,21 @@ public class CenterScript : MonoBehaviour {
     public Button buttonAcceptBet;
     public Text buttonBetText;
     public Text cantBetText;
+
+    public Canvas scoreCanvas;
+    public Button buttonNextRound;
+    /* scoreX distribution
+     * [0] = bet
+     * [1] = roundsWon
+     * [2] = points on round
+     * [3] = total points
+     */
+    public Text[] scoreD; 
+    public Text[] scoreR;
+    public Text[] scoreU;
+    public Text[] scoreL;
+
+    public Text[][] scores;
 
 
     public void AddPlayers(List<PlayerScript> p)
@@ -99,6 +116,11 @@ public class CenterScript : MonoBehaviour {
         buttonBetText.text = "0";
         betCanvas.enabled = false;
         betReady = false;
+        scores = new Text[4][];
+        scores[0] = scoreD;
+        scores[1] = scoreR;
+        scores[2] = scoreU;
+        scores[3] = scoreL;
     }
     // Use this for initialization
     void Start () {
@@ -114,6 +136,18 @@ public class CenterScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        if (showScore)
+        {
+            /*for (int i = 0; i < players.Count; i++)
+            {
+                FillScore(i);
+            }*/
+            FillScoreOrder();
+            scoreCanvas.enabled = true;
+        } else
+        {
+            scoreCanvas.enabled = false;
+        }
         if (betTime)
         {
             switch(playerToBet)
@@ -191,6 +225,7 @@ public class CenterScript : MonoBehaviour {
                             betCanvas.enabled = false;
                             betTime = false;
                             betReady = false;
+                            betD.image.color = Color.cyan;
                         }
                     }
                     else
@@ -208,6 +243,7 @@ public class CenterScript : MonoBehaviour {
                             cantBetText.text = "";
                             betCanvas.enabled = false;
                             betReady = false;
+                            betD.image.color = Color.cyan;
                         }
                     }
                     break;
@@ -336,7 +372,7 @@ public class CenterScript : MonoBehaviour {
                 if (revisarJugada)
                 {
                     //Debug.Log("revisaJugada");
-                    if (deleteCards) StartCoroutine(Wait(2));
+                    if (deleteCards) StartCoroutine(WaitRevisarJugada(2));
                     /*if (deleteCards)
                     {
                         int nextPlayer = RevisarJugada(firstPlayer);
@@ -625,12 +661,16 @@ public class CenterScript : MonoBehaviour {
         betR.text = "";
         betU.text = "";
         betL.text = "";
-        roundsWonD.text = "Rondas ganadas: 0";
-        roundsWonR.text = "Rondas ganadas: 0";
-        roundsWonU.text = "Rondas ganadas: 0";
-        roundsWonL.text = "Rondas ganadas: 0";
+        roundsWonD.text = "Bazas ganadas: 0";
+        roundsWonR.text = "Bazas ganadas: 0";
+        roundsWonU.text = "Bazas ganadas: 0";
+        roundsWonL.text = "Bazas ganadas: 0";
         nextRound = false;
         buttonBetText.text = "0";
+        betD.image.color = Color.white;
+        betR.image.color = Color.white;
+        betU.image.color = Color.white;
+        betL.image.color = Color.white;
     }
 
     public bool NeedNextRound()
@@ -638,7 +678,7 @@ public class CenterScript : MonoBehaviour {
         return nextRound;
     }
 
-    public IEnumerator Wait(float seconds)
+    public IEnumerator WaitRevisarJugada(float seconds)
     {
         //Debug.Log(Time.time);
         deleteCards = false;
@@ -664,7 +704,7 @@ public class CenterScript : MonoBehaviour {
         if (numTurns == numCards)
         {
             ScoreBoard.GetInstance().UpdateScoreRound(actualRound);
-            nextRound = true;
+            showScore = true;
         }
         deleteCards = true;
         //Debug.Log(Time.time);
@@ -701,14 +741,17 @@ public class CenterScript : MonoBehaviour {
                 case 1:
                     betR.text = bet.ToString();
                     betR.interactable = false;
+                    betR.image.color = Color.cyan;
                     break;
                 case 2:
                     betU.text = bet.ToString();
                     betU.interactable = false;
+                    betU.image.color = Color.cyan;
                     break;
                 case 3:
                     betL.text = bet.ToString();
                     betL.interactable = false;
+                    betL.image.color = Color.cyan;
                     break;
             }
             playerToBet = -1;
@@ -727,14 +770,17 @@ public class CenterScript : MonoBehaviour {
                 case 1:
                     betR.text = bet.ToString();
                     betR.interactable = false;
+                    betR.image.color = Color.cyan;
                     break;
                 case 2:
                     betU.text = bet.ToString();
                     betU.interactable = false;
+                    betU.image.color = Color.cyan;
                     break;
                 case 3:
                     betL.text = bet.ToString();
                     betL.interactable = false;
+                    betL.image.color = Color.cyan;
                     break;
             }
             playerToBet = (playerToBet + 1) % players.Count;
@@ -749,16 +795,16 @@ public class CenterScript : MonoBehaviour {
         switch(p)
         {
             case 0:
-                roundsWonD.text = "Rondas ganadas: " + rw.ToString();
+                roundsWonD.text = "Bazas ganadas: " + rw.ToString();
                 break;
             case 1:
-                roundsWonR.text = "Rondas ganadas: " + rw.ToString();
+                roundsWonR.text = "Bazas ganadas: " + rw.ToString();
                 break;
             case 2:
-                roundsWonU.text = "Rondas ganadas: " + rw.ToString();
+                roundsWonU.text = "Bazas ganadas: " + rw.ToString();
                 break;
             case 3:
-                roundsWonL.text = "Rondas ganadas: " + rw.ToString();
+                roundsWonL.text = "Bazas ganadas: " + rw.ToString();
                 break;
         }
     }
@@ -786,5 +832,87 @@ public class CenterScript : MonoBehaviour {
     public void ButtonAcceptBet()
     {
         betReady = true;
+    }
+
+    public void FillScore(int p)
+    {
+        ScoreBoard sb = ScoreBoard.GetInstance();
+        switch(p)
+        {
+            case 0:
+                scoreD[1].text = betD.text;
+                scoreD[2].text = sb.GetRoundsWon(actualRound, p).ToString();
+                scoreD[3].text = sb.GetScore(actualRound, p).ToString();
+                scoreD[4].text = sb.ScorePlayer(p).ToString();
+                break;
+            case 1:
+                scoreR[1].text = betR.text;
+                scoreR[2].text = sb.GetRoundsWon(actualRound, p).ToString();
+                scoreR[3].text = sb.GetScore(actualRound, p).ToString();
+                scoreR[4].text = sb.ScorePlayer(p).ToString();
+                break;
+            case 2:
+                scoreU[1].text = betU.text;
+                scoreU[2].text = sb.GetRoundsWon(actualRound, p).ToString();
+                scoreU[3].text = sb.GetScore(actualRound, p).ToString();
+                scoreU[4].text = sb.ScorePlayer(p).ToString();
+                break;
+            case 3:
+                scoreL[1].text = betL.text;
+                scoreL[2].text = sb.GetRoundsWon(actualRound, p).ToString();
+                scoreL[3].text = sb.GetScore(actualRound, p).ToString();
+                scoreL[4].text = sb.ScorePlayer(p).ToString();
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void FillScoreOrder()
+    {
+        ScoreBoard sb = ScoreBoard.GetInstance();
+        int[] orderPlayers = new int[players.Count];
+        int[] arrayScores = new int[players.Count];
+
+        for (int i = 0; i < players.Count; i++)
+        {
+            orderPlayers[i] = i;
+        }
+
+        for (int i = 0; i < players.Count; i++)
+        {
+            arrayScores[i] = sb.ScorePlayer(i);
+        }
+
+        for (int i = 0; i < arrayScores.Length; i++)
+        {
+            for (int j = 0; j < (arrayScores.Length - 1); j++)
+            {
+                if (arrayScores[j] < arrayScores[j+1])
+                {
+                    int temp = arrayScores[j];
+                    arrayScores[j] = arrayScores[j + 1];
+                    arrayScores[j + 1] = temp;
+                    temp = orderPlayers[j];
+                    orderPlayers[j] = orderPlayers[j + 1];
+                    orderPlayers[j + 1] = temp;
+                }
+            }
+        }
+
+        for (int i = 0; i < orderPlayers.Length; i++)
+        {
+            scores[i][0].text = players[orderPlayers[i]].name;
+            scores[i][1].text = sb.GetBet(actualRound, orderPlayers[i]).ToString();
+            scores[i][2].text = sb.GetRoundsWon(actualRound, orderPlayers[i]).ToString();
+            scores[i][3].text = sb.GetScore(actualRound, orderPlayers[i]).ToString();
+            scores[i][4].text = sb.ScorePlayer(orderPlayers[i]).ToString();
+        }
+    }
+
+    public void ButtonNextRound()
+    {
+        showScore = false;
+        nextRound = true;
     }
 }

@@ -22,6 +22,7 @@ public class BoardScript : MonoBehaviour {
     public Text scoreL;
     public Text roundsPlayed;
     public Text cardsDealed;
+    public Text winnerText;
 
     private Vector3 deckPosition = new Vector3(-3, 3, 0);
 
@@ -311,6 +312,14 @@ public class BoardScript : MonoBehaviour {
             } else
             {
                 Debug.Log("ITS OVER");
+                int winner = ScoreBoard.GetInstance().Winner();
+                if (winner == 0)
+                {
+                    winnerText.text = "¡Has ganado!";
+                } else
+                {
+                    winnerText.text = "La siguiente vez será";
+                }
                 //UnityEngine.SceneManagement.SceneManager.LoadScene("menu");
             }
         }
@@ -318,10 +327,10 @@ public class BoardScript : MonoBehaviour {
 
     private void UpdateScore()
     {
-        scoreD.text = "Score: " + ScoreBoard.GetInstance().ScorePlayer(0).ToString();
-        scoreR.text = "Score: " + ScoreBoard.GetInstance().ScorePlayer(1).ToString();
-        scoreU.text = "Score: " + ScoreBoard.GetInstance().ScorePlayer(2).ToString();
-        scoreL.text = "Score: " + ScoreBoard.GetInstance().ScorePlayer(3).ToString();
+        scoreD.text = "Puntos: " + ScoreBoard.GetInstance().ScorePlayer(0).ToString();
+        scoreR.text = "Puntos: " + ScoreBoard.GetInstance().ScorePlayer(1).ToString();
+        scoreU.text = "Puntos: " + ScoreBoard.GetInstance().ScorePlayer(2).ToString();
+        scoreL.text = "Puntos: " + ScoreBoard.GetInstance().ScorePlayer(3).ToString();
     }
 
     public void UpdateRoundsPlayed()

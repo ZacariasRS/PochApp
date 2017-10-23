@@ -120,6 +120,11 @@ public class ScoreBoard
         return scoreBoardContent[r, p].roundsWon;
     }
 
+    public int GetScore(int r, int p)
+    {
+        return scoreBoardContent[r, p].score;
+    }
+
     public string WriteConsoleBets()
     {
         string s = "";
@@ -185,5 +190,21 @@ public class ScoreBoard
             sum += scoreBoardContent[r, i].bet;
         }
         return sum;
+    }
+
+    public int Winner() // TODO: Decir que jugador gana?
+    {
+        int max = -100;
+        int index = 0;
+        for (int i = 0; i < scoreBoardContent.GetLength(1); i++)
+        {
+            int aux = ScorePlayer(i);
+            if (aux > max)
+            {
+                max = aux;
+                index = i;
+            }
+        }
+        return index;
     }
 }

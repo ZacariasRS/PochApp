@@ -33,7 +33,7 @@ public class MenuButtonScript : MonoBehaviour {
         orderCards.transform.position = new Vector3(300, 300, 0);
         whiteCube.transform.position = new Vector3(300, 300, 0);
         rulesCube.transform.position = new Vector3(300, 300, 0);
-        Debug.Log(PlayerPrefs.GetInt("OrderCards", 0));
+        Debug.Log(PlayerPrefs.GetInt("OrderCards", 1));
         rulesCanvas.enabled = false;
         if (PlayerPrefs.GetInt("OrderCards") == 1)
         {
