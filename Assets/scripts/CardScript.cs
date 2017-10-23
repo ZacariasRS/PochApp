@@ -7,22 +7,23 @@ public class CardScript : MonoBehaviour {
     public int rank; // valor de la carta
     public char palo; // palo al que pertenece
     public int player; // jugador al que pertenece la carta
-    public Material greyScale;
-    public Material def;
     public int moving;
     public int speed;
-
-
 
     private SpriteRenderer mySpriteRenderer;
     private Sprite mySprite;
     public bool alreadyClicked;
     private Vector3 initialPosition;
     public bool inCenter;
+    //private Shader def;
+    //public Shader grayScale;
+    public Material def;
+    public Material grayScale;
 
     private void Awake()
     {
         mySpriteRenderer = GetComponent<SpriteRenderer>();
+        //def = mySpriteRenderer.material;
         moving = -1;
         speed = 4;
     }
@@ -63,20 +64,30 @@ public class CardScript : MonoBehaviour {
         {
             if (alreadyClicked)
             {
-                transform.localScale = new Vector3(1.0f, 1.0f, 0);
+                transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
                 ReturnToInitialPosition();
 
                 alreadyClicked = false;
             }
             else
             {
-                transform.localScale = new Vector3(2.0f, 2.0f, 0);
+                transform.localScale = new Vector3(2.0f, 2.0f, 1.0f);
                 transform.position = new Vector3(transform.position.x, transform.position.y, -3.0f);
                 alreadyClicked = true;
             }
         }
     }
-    
+
+    private void OnMouseUp()
+    {
+        if (!inCenter)
+        {
+            alreadyClicked = false;
+            transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+            ReturnToInitialPosition();
+        }
+    }
+
     private void OnMouseDrag()
     {
         if (!inCenter)
@@ -135,7 +146,7 @@ public class CardScript : MonoBehaviour {
         if (imP)
         {
             Debug.Log("ImPlayer Scale down");
-            transform.localScale -= new Vector3(1.0f, 1.0f, 0);
+            transform.localScale -= new Vector3(1.0f, 1.0f, 1.0f);
         } else
         {
             mySpriteRenderer.sprite = mySprite;
@@ -192,12 +203,12 @@ public class CardScript : MonoBehaviour {
     
     public void SetGreyMaterial()
     {
-        GetComponent<SpriteRenderer>().material = greyScale;
+        mySpriteRenderer.material  = grayScale;
     }
 
     public void SetDefMaterial()
     {
-        GetComponent<SpriteRenderer>().material = def;
+        mySpriteRenderer.material = def;
     }
     
     public Sprite GetSprite()

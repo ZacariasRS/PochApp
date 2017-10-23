@@ -30,6 +30,7 @@ public class CenterScript : MonoBehaviour {
     public bool botPlay;
     public int playerWonRound;
     public bool botBet;
+    public bool betReady;
 
     public InputField betD;
     public InputField betR;
@@ -42,9 +43,13 @@ public class CenterScript : MonoBehaviour {
     public Text roundsWonL;
     public Text warning;
 
-
-    
-
+    public Canvas betCanvas;
+    public Button buttonSum;
+    public Button buttonRest;
+    public Button buttonBet;
+    public Button buttonAcceptBet;
+    public Text buttonBetText;
+    public Text cantBetText;
 
 
     public void AddPlayers(List<PlayerScript> p)
@@ -90,6 +95,10 @@ public class CenterScript : MonoBehaviour {
         botPlay = true;
         botBet = true;
         warning.enabled = true;
+        buttonBetText = buttonBet.GetComponentInChildren<Text>();
+        buttonBetText.text = "0";
+        betCanvas.enabled = false;
+        betReady = false;
     }
     // Use this for initialization
     void Start () {
@@ -110,12 +119,12 @@ public class CenterScript : MonoBehaviour {
             switch(playerToBet)
             {
                 case 0:
-                    if (warning.text == "") warning.text = "Introduzca su apuesta\n(pulse 'Enter bet...')" ;
+                    /*if (warning.text == "") warning.text = "Introduzca su apuesta\n(pulse 'Enter bet...')" ;
                     players[0].SetAllCardNormal();
                     betD.interactable = true;
                     //EventSystem.current.SetSelectedGameObject(betD.gameObject);
-                    if (betD.isFocused/* && Input.GetKeyDown(KeyCode.UpArrow)*/ && betD.text != "")
-                    {
+                    if (betD.isFocused/* && Input.GetKeyDown(KeyCode.UpArrow) && betD.text != "")
+                    /*{
                         if (playerToBet == lastPlayerToBet)
                         {
                             if (int.Parse(betD.text) <= numCards)
@@ -150,6 +159,55 @@ public class CenterScript : MonoBehaviour {
                                 }
                             }
                             else warning.text = "Nano no apuestes tanto";
+                        }
+                    }*/
+                    players[0].SetAllCardNormal();
+                    betCanvas.enabled = true;
+                    if (playerToBet == lastPlayerToBet)
+                    {
+                        int amountOfBets = numCards - ScoreBoard.GetInstance().SumOfBetsOfRound(actualRound);
+                        if (amountOfBets >= 0)
+                        {
+                            cantBetText.text = "No puede apostar " + amountOfBets;
+                            if (int.Parse(buttonBetText.text) == amountOfBets)
+                            {
+                                buttonAcceptBet.interactable = false;
+                            }
+                            else buttonAcceptBet.interactable = true;
+                        }
+                        if (betReady)
+                        {
+                            //warning.text = "";
+                            ScoreBoard.GetInstance().SetBetRoundPlayer(actualRound, playerToBet, int.Parse(buttonBetText.text));
+                            playerToBet = -1;
+                            lastPlayerToBet = -1;
+                            betD.text = buttonBetText.text;
+                            //betD.interactable = false;
+                            if (!players[0].myTurn)
+                            {
+                                players[0].SetAllCardGrey();
+                            }
+                            cantBetText.text = "";
+                            betCanvas.enabled = false;
+                            betTime = false;
+                            betReady = false;
+                        }
+                    }
+                    else
+                    {
+                        if(betReady)
+                        {
+                            ScoreBoard.GetInstance().SetBetRoundPlayer(actualRound, playerToBet, int.Parse(buttonBetText.text));
+                            //betD.interactable = false;
+                            betD.text = buttonBetText.text;
+                            playerToBet = (playerToBet + 1) % players.Count;
+                            if (!players[0].myTurn)
+                            {
+                                players[0].SetAllCardGrey();
+                            }
+                            cantBetText.text = "";
+                            betCanvas.enabled = false;
+                            betReady = false;
                         }
                     }
                     break;
@@ -572,6 +630,7 @@ public class CenterScript : MonoBehaviour {
         roundsWonU.text = "Rondas ganadas: 0";
         roundsWonL.text = "Rondas ganadas: 0";
         nextRound = false;
+        buttonBetText.text = "0";
     }
 
     public bool NeedNextRound()
@@ -702,5 +761,30 @@ public class CenterScript : MonoBehaviour {
                 roundsWonL.text = "Rondas ganadas: " + rw.ToString();
                 break;
         }
+    }
+
+    public void ButtonSum()
+    {
+        int num = int.Parse(buttonBetText.text);
+        if (num < numCards)
+        {
+            num++;
+            buttonBetText.text = num.ToString();
+        }
+    }
+
+    public void ButtonRest()
+    {
+        int num = int.Parse(buttonBetText.text);
+        if (num != 0)
+        {
+            num--;
+            buttonBetText.text = num.ToString();
+        }
+    }
+
+    public void ButtonAcceptBet()
+    {
+        betReady = true;
     }
 }

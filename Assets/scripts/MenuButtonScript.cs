@@ -13,7 +13,6 @@ public class MenuButtonScript : MonoBehaviour {
     public Button rules;
 
     public Toggle orderCards;
-    public Button exitOptions;
     public GameObject whiteCube;
     public bool optionsOut;
 
@@ -32,7 +31,6 @@ public class MenuButtonScript : MonoBehaviour {
 	void Start () {
         optionsOut = true;
         orderCards.transform.position = new Vector3(300, 300, 0);
-        exitOptions.transform.position = new Vector3(300, 300, 0);
         whiteCube.transform.position = new Vector3(300, 300, 0);
         rulesCube.transform.position = new Vector3(300, 300, 0);
         Debug.Log(PlayerPrefs.GetInt("OrderCards", 0));
@@ -82,14 +80,14 @@ public class MenuButtonScript : MonoBehaviour {
     {
         if (optionsOut)
         { 
-            orderCards.transform.position = new Vector3(0, 0, 0);
-            exitOptions.transform.position = new Vector3(0, -40, 0);
-            whiteCube.transform.position = new Vector3(0, -30, 0);
+            orderCards.transform.position = new Vector3(0, 0, -2);
+            //exitOptions.transform.position = new Vector3(0, -40, 0);
+            whiteCube.transform.position = new Vector3(0, 0, -1);
             optionsOut = false;
         } else
         {
             orderCards.transform.position = new Vector3(300, 300, 0);
-            exitOptions.transform.position = new Vector3(300, 300, 0);
+            //exitOptions.transform.position = new Vector3(300, 300, 0);
             whiteCube.transform.position = new Vector3(300, 300, 0);
             optionsOut = true;
         }
@@ -107,7 +105,7 @@ public class MenuButtonScript : MonoBehaviour {
             rulesIndex = 0;
             rulesText.text = "Reglas del juego de cartas 'La Pocha')";
             indexText.text = "0/16";
-            rulesCube.transform.position = new Vector3(0, 0, 0);
+            rulesCube.transform.position = new Vector3(0, 0, -1);
             menuCanvas.enabled = false;
             rulesCanvas.enabled = true;
         }

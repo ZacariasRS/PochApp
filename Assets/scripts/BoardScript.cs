@@ -247,11 +247,16 @@ public class BoardScript : MonoBehaviour {
         {
             foreach (PlayerScript player in players) player.OrderCards();
         }
+
         for (int i = 0; i < players.Count; i++)
         {
             if (i == startPlayer) players[startPlayer].StartTurn();
             else players[i].StopTurn();
         }
+
+        // TODO: pal android que no se ve
+        //foreach (PlayerScript player in players) player.SetAllCardNormal();
+        // fin
         startPlayer = (startPlayer + 1) % players.Count;
     }
 
@@ -261,7 +266,7 @@ public class BoardScript : MonoBehaviour {
         // Players
         PlayerScript[] auxPlayers = GetComponentsInChildren<PlayerScript>();
         for (int i = 0; i < 4; i++) players.Add(auxPlayers[i]);
-        startPlayer = 0;
+        startPlayer = 0; // TODO: Dejarlo a 0
         //
         // rondas = new int[(40 / players.Count)+(players.Count - 1)];
         for (int i = 0; i < players.Count; i++) rounds.Add(1); // agregar tantas de 1 como jugadores

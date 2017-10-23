@@ -38,7 +38,7 @@ public class PlayerScript : MonoBehaviour {
         if (cards.Count > 0)
         {
             float auxXY = -(cards.Count / 2.0f);
-            float auxZ = 1;
+            float auxZ = -1;
             foreach (GameObject card in cards)
             {
                 if (card.transform.position.x == 0)
