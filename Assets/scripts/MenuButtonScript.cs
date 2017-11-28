@@ -11,6 +11,7 @@ public class MenuButtonScript : MonoBehaviour {
     public Button options;
     public Button exit;
     public Button rules;
+    public Button tutorialButton;
 
     public Toggle orderCards;
     public GameObject whiteCube;
@@ -55,6 +56,11 @@ public class MenuButtonScript : MonoBehaviour {
     public void LocalPlayButton()
     {
         UnityEngine.SceneManagement.SceneManager.LoadScene("pocha");
+    }
+
+    public void TutorialButton()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("tutorial");
     }
 
     public void ExitButton()

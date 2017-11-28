@@ -4527,7 +4527,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Menu
+  m_Text: "Salir al men\xFA"
 --- !u!222 &1408764487
 CanvasRenderer:
   m_ObjectHideFlags: 0

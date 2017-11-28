@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerScript : MonoBehaviour {
 
+    public bool isMultiPlayer;
+
     public List<GameObject> cards; // las cartas que posee el jugador
     public bool imPlayer; // soy un jugador, sprite de carta o back
     public bool myTurn; // indica si es su turno

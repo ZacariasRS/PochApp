@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 public class BoardScript : MonoBehaviour {
 
+    public bool isMultiPlayer;
+    public bool isTutorial;
+
     public GameObject card; // prefab usado para carta
     public List<GameObject> deck; // la baraja entera
     public CardScript muestra; // la muestra
@@ -57,6 +60,7 @@ public class BoardScript : MonoBehaviour {
                 {
                     auxCard.GetComponent<CardScript>().CreateCard(auxSprite, i-4, 'b');
                 }
+                if (isMultiPlayer) auxCard.GetComponent<CardScript>().isMultiPlayer = true;
                 deck.Add(auxCard);
             }
             
@@ -92,6 +96,7 @@ public class BoardScript : MonoBehaviour {
                 {
                     auxCard.GetComponent<CardScript>().CreateCard(auxSprite, i - 4, 'c');
                 }
+                if (isMultiPlayer) auxCard.GetComponent<CardScript>().isMultiPlayer = true;
                 deck.Add(auxCard);
             }
 
@@ -127,6 +132,7 @@ public class BoardScript : MonoBehaviour {
                 {
                     auxCard.GetComponent<CardScript>().CreateCard(auxSprite, i - 4, 'e');
                 }
+                if (isMultiPlayer) auxCard.GetComponent<CardScript>().isMultiPlayer = true;
                 deck.Add(auxCard);
             }
 
@@ -162,6 +168,7 @@ public class BoardScript : MonoBehaviour {
                 {
                     auxCard.GetComponent<CardScript>().CreateCard(auxSprite, i - 4, 'o');
                 }
+                if (isMultiPlayer) auxCard.GetComponent<CardScript>().isMultiPlayer = true;
                 deck.Add(auxCard);
             }
 
@@ -170,21 +177,55 @@ public class BoardScript : MonoBehaviour {
 
     void RepartirRonda()
     {
-        Debug.Log("Repartimos ronda (num, numCards): " + actualRound + ", " + rounds[actualRound]);
-        List<int> cardsGiven = new List<int>(40);
-        GameObject auxCard = null;
-        bool aux = true;
-        int numCard = 0;
-        UpdateRoundsPlayed();
-        UpdateCardsDealed();
-        for (int i=0;i<players.Count;i++)
+        if (!isTutorial)
         {
-            //Debug.Log("i = " + i);
-            //Debug.Log("Ronda Actual = " + rounds[actualRound]);
-            for (int j=0;j<rounds[actualRound];j++)
+            Debug.Log("Repartimos ronda (num, numCards): " + actualRound + ", " + rounds[actualRound]);
+            List<int> cardsGiven = new List<int>(40);
+            GameObject auxCard = null;
+            bool aux = true;
+            int numCard = 0;
+            UpdateRoundsPlayed();
+            UpdateCardsDealed();
+            for (int i = 0; i < players.Count; i++)
+            {
+                //Debug.Log("i = " + i);
+                //Debug.Log("Ronda Actual = " + rounds[actualRound]);
+                for (int j = 0; j < rounds[actualRound]; j++)
+                {
+                    aux = true;
+                    while (aux)
+                    {
+                        numCard = Random.Range(0, 40);
+                        if (!cardsGiven.Contains(numCard))
+                        {
+                            aux = false;
+                        }
+                    }
+                    auxCard = deck[numCard];
+                    auxCard.GetComponent<CardScript>().SetPlayer(i);
+                    players[i].AddCard(deck[numCard]);
+                    cardsGiven.Add(numCard);
+                }
+            }
+            // Poner muestra
+
+            if (cardsGiven.Count == 40)
+            {
+                int playerMuestra;
+                if (startPlayer == 0)
+                {
+                    playerMuestra = 3;
+                }
+                else
+                {
+                    playerMuestra = startPlayer - 1;
+                }
+                muestra = deck[cardsGiven[playerMuestra * 10 + 9]].GetComponent<CardScript>(); // TODO: La muestra es del que reparte, no el que empieza (es decir, el anterior al startPlayer)
+            }
+            else
             {
                 aux = true;
-                while(aux)
+                while (aux)
                 {
                     numCard = Random.Range(0, 40);
                     if (!cardsGiven.Contains(numCard))
@@ -193,72 +234,204 @@ public class BoardScript : MonoBehaviour {
                     }
                 }
                 auxCard = deck[numCard];
-                auxCard.GetComponent<CardScript>().SetPlayer(i);
-                players[i].AddCard(deck[numCard]);
-                cardsGiven.Add(numCard);
+                muestra = auxCard.GetComponent<CardScript>();
             }
-        }
-        // Poner muestra
-        
-        if (cardsGiven.Count == 40)
-        {
-            int playerMuestra;
+            muestraSprite.sprite = muestra.GetComponent<CardScript>().GetSprite();
+            center.ReceiveMuestra(muestra);
+            center.ReceiveRonda(actualRound, rounds[actualRound]);
+            center.playerToBet = startPlayer;
+            center.playerToPlay = startPlayer;
             if (startPlayer == 0)
             {
-                playerMuestra = 3;
-            } else
-            {
-                playerMuestra = startPlayer - 1;
+                center.lastPlayerToBet = 3;
             }
-            muestra = deck[cardsGiven[playerMuestra*10+9]].GetComponent<CardScript>(); // TODO: La muestra es del que reparte, no el que empieza (es decir, el anterior al startPlayer)
-        }
-        else
-        {
-            aux = true;
-            while (aux)
+            else
             {
-                numCard = Random.Range(0, 40);
-                if (!cardsGiven.Contains(numCard))
-                {
-                    aux = false;
-                }
+                center.lastPlayerToBet = (startPlayer - 1) % players.Count;
             }
-            auxCard = deck[numCard];
-            muestra = auxCard.GetComponent<CardScript>();
-        }
-        muestraSprite.sprite = muestra.GetComponent<CardScript>().GetSprite();
-        center.ReceiveMuestra(muestra);
-        center.ReceiveRonda(actualRound, rounds[actualRound]);
-        center.playerToBet = startPlayer;
-        center.playerToPlay = startPlayer;
-        if (startPlayer == 0)
-        {
-            center.lastPlayerToBet = 3;
-        } else
-        {
-            center.lastPlayerToBet = (startPlayer - 1) % players.Count;
-        }
-        center.betTime = true;
-        actualRound++;
-        if (PlayerPrefs.GetInt("OrderCards") == 1)
-        {
-            foreach (PlayerScript player in players) player.OrderCards(muestra.GetPalo()); // TODO: usar muestra
-        }
-        else
-        {
-            foreach (PlayerScript player in players) player.OrderCards();
-        }
+            center.betTime = true;
+            actualRound++;
+            if (PlayerPrefs.GetInt("OrderCards") == 1)
+            {
+                foreach (PlayerScript player in players) player.OrderCards(muestra.GetPalo()); // TODO: usar muestra
+            }
+            else
+            {
+                foreach (PlayerScript player in players) player.OrderCards();
+            }
 
-        for (int i = 0; i < players.Count; i++)
-        {
-            if (i == startPlayer) players[startPlayer].StartTurn();
-            else players[i].StopTurn();
-        }
+            for (int i = 0; i < players.Count; i++)
+            {
+                if (i == startPlayer) players[startPlayer].StartTurn();
+                else players[i].StopTurn();
+            }
 
-        // TODO: pal android que no se ve
-        //foreach (PlayerScript player in players) player.SetAllCardNormal();
-        // fin
-        startPlayer = (startPlayer + 1) % players.Count;
+            startPlayer = (startPlayer + 1) % players.Count;
+        } else // TODO: tutorial
+        {
+            UpdateRoundsPlayed();
+            UpdateCardsDealed();
+            switch(actualRound)
+            {
+                case 0: // ganar por palo inicio
+                    // carta a jugador
+                    deck[9].GetComponent<CardScript>().SetPlayer(0);
+                    players[0].AddCard(deck[9]);
+
+                    // cartas a bots
+                    deck[14].GetComponent<CardScript>().SetPlayer(1);
+                    players[1].AddCard(deck[14]);
+
+                    deck[4].GetComponent<CardScript>().SetPlayer(2);
+                    players[2].AddCard(deck[4]);
+
+                    deck[20].GetComponent<CardScript>().SetPlayer(3);
+                    players[3].AddCard(deck[20]);
+                    muestra = deck[36].GetComponent<CardScript>();
+                    break;
+                case 1: // no puede apostar 0... pero tiene muestra!
+                    deck[19].GetComponent<CardScript>().SetPlayer(0);
+                    players[0].AddCard(deck[19]);
+                    
+                    // cartas a bots
+                    deck[8].GetComponent<CardScript>().SetPlayer(1);
+                    players[1].AddCard(deck[8]);
+
+                    deck[24].GetComponent<CardScript>().SetPlayer(2);
+                    players[2].AddCard(deck[24]);
+
+                    deck[32].GetComponent<CardScript>().SetPlayer(3);
+                    players[3].AddCard(deck[32]);
+
+                    muestra = deck[18].GetComponent<CardScript>();
+                    break;
+                case 2:
+                    deck[31].GetComponent<CardScript>().SetPlayer(0);
+                    players[0].AddCard(deck[31]);
+
+                    // cartas a bots
+                    deck[5].GetComponent<CardScript>().SetPlayer(1);
+                    players[1].AddCard(deck[5]);
+
+                    deck[29].GetComponent<CardScript>().SetPlayer(2);
+                    players[2].AddCard(deck[29]);
+
+                    deck[38].GetComponent<CardScript>().SetPlayer(3);
+                    players[3].AddCard(deck[38]);
+
+                    muestra = deck[6].GetComponent<CardScript>();
+                    break;
+                case 3:
+                    deck[28].GetComponent<CardScript>().SetPlayer(0);
+                    players[0].AddCard(deck[28]);
+
+                    // cartas a bots
+                    deck[25].GetComponent<CardScript>().SetPlayer(1);
+                    players[1].AddCard(deck[25]);
+
+                    deck[23].GetComponent<CardScript>().SetPlayer(2);
+                    players[2].AddCard(deck[23]);
+
+                    deck[8].GetComponent<CardScript>().SetPlayer(3);
+                    players[3].AddCard(deck[8]);
+
+                    muestra = deck[21].GetComponent<CardScript>();
+                    break;
+                case 4:
+                    deck[0].GetComponent<CardScript>().SetPlayer(0);
+                    players[0].AddCard(deck[0]);
+                    deck[18].GetComponent<CardScript>().SetPlayer(0);
+                    players[0].AddCard(deck[18]);
+                    // cartas a bots
+                    deck[11].GetComponent<CardScript>().SetPlayer(1);
+                    players[1].AddCard(deck[11]);
+                    deck[21].GetComponent<CardScript>().SetPlayer(1);
+                    players[1].AddCard(deck[21]);
+
+                    deck[23].GetComponent<CardScript>().SetPlayer(2);
+                    players[2].AddCard(deck[23]);
+                    deck[33].GetComponent<CardScript>().SetPlayer(2);
+                    players[2].AddCard(deck[33]);
+
+                    deck[19].GetComponent<CardScript>().SetPlayer(3);
+                    players[3].AddCard(deck[19]);
+                    deck[22].GetComponent<CardScript>().SetPlayer(3);
+                    players[3].AddCard(deck[22]);
+
+                    muestra = deck[1].GetComponent<CardScript>();
+                    break;
+                case 5: // random
+                    List<int> cardsGiven = new List<int>(40);
+                    GameObject auxCard;
+                    int numCard = 0;
+                    bool aux;
+                    for (int i = 0; i < players.Count; i++)
+                    {
+                        //Debug.Log("i = " + i);
+                        //Debug.Log("Ronda Actual = " + rounds[actualRound]);
+                        for (int j = 0; j < rounds[actualRound]; j++)
+                        {
+                            aux = true;
+                            while (aux)
+                            {
+                                numCard = Random.Range(0, 40);
+                                if (!cardsGiven.Contains(numCard))
+                                {
+                                    aux = false;
+                                }
+                            }
+                            auxCard = deck[numCard];
+                            auxCard.GetComponent<CardScript>().SetPlayer(i);
+                            players[i].AddCard(deck[numCard]);
+                            cardsGiven.Add(numCard);
+                        }
+                    }
+                    aux = true;
+                    while (aux)
+                    {
+                        numCard = Random.Range(0, 40);
+                        if (!cardsGiven.Contains(numCard))
+                        {
+                            aux = false;
+                        }
+                    }
+                    auxCard = deck[numCard];
+                    muestra = auxCard.GetComponent<CardScript>();
+                    break;
+            }
+            muestraSprite.sprite = muestra.GetComponent<CardScript>().GetSprite();
+            center.ReceiveMuestra(muestra);
+            center.ReceiveRonda(actualRound, rounds[actualRound]);
+            center.playerToBet = startPlayer;
+            center.playerToPlay = startPlayer;
+            if (startPlayer == 0)
+            {
+                center.lastPlayerToBet = 3;
+            }
+            else
+            {
+                center.lastPlayerToBet = (startPlayer - 1) % players.Count;
+            }
+            center.betTime = true;
+            actualRound++;
+            if (PlayerPrefs.GetInt("OrderCards") == 1)
+            {
+                foreach (PlayerScript player in players) player.OrderCards(muestra.GetPalo()); // TODO: usar muestra
+            }
+            else
+            {
+                foreach (PlayerScript player in players) player.OrderCards();
+            }
+
+            for (int i = 0; i < players.Count; i++)
+            {
+                if (i == startPlayer) players[startPlayer].StartTurn();
+                else players[i].StopTurn();
+            }
+
+            startPlayer = (startPlayer + 1) % players.Count;
+        }
+        
     }
 
 
@@ -266,61 +439,112 @@ public class BoardScript : MonoBehaviour {
     {
         // Players
         PlayerScript[] auxPlayers = GetComponentsInChildren<PlayerScript>();
-        for (int i = 0; i < 4; i++) players.Add(auxPlayers[i]);
+        for (int i = 0; i < auxPlayers.Length; i++) players.Add(auxPlayers[i]);
         startPlayer = 0; // TODO: Dejarlo a 0
-        //
-        // rondas = new int[(40 / players.Count)+(players.Count - 1)];
-        for (int i = 0; i < players.Count; i++) rounds.Add(1); // agregar tantas de 1 como jugadores
-        for (int i = 2; i <= (40/players.Count);i++) // agregar rondas intermedias
+                            //
+                            // rondas = new int[(40 / players.Count)+(players.Count - 1)];
+        if (!isTutorial)
         {
-            rounds.Add(i);
+            for (int i = 0; i < players.Count; i++) rounds.Add(1); // agregar tantas de 1 como jugadores
+            for (int i = 2; i <= (40 / players.Count); i++) // agregar rondas intermedias
+            {
+                rounds.Add(i);
+            }
+            for (int i = 0; i < (players.Count - 1); i++) // agregar faltantes de la ultima ronda
+            {
+                rounds.Add(40 / players.Count);
+            }
         }
-        for (int i = 0; i < (players.Count - 1); i++) // agregar faltantes de la ultima ronda
+        else // TODO: tutorial
         {
-            rounds.Add(40 / players.Count);
+            for (int i = 0; i < players.Count; i++) rounds.Add(1);
+            rounds.Add(2);
+            rounds.Add(5);
         }
-        actualRound = 0;
+
+        actualRound = 0; // TODO: Dejarlo a 0
         ScoreBoard.GetInstance().InitiateScoreBoard(rounds.Count, players.Count); // inicializamos el scoreBoard
         Debug.Log(ScoreBoard.GetInstance().ScoreSize());
         //
         center = GetComponentInChildren<CenterScript>();
         center.AddPlayers(players);
         //
-
     }
     // Use this for initialization
     void Start () {
         Debug.Log(PlayerPrefs.GetInt("OrderCards"));
         InitializeDeck();
-        RepartirRonda();
+        //RepartirRonda();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        if (center.NeedNextRound())
+        if (isMultiPlayer)
         {
-            center.nextRound = false;
-            center.ResetValues();
-            Debug.Log(ScoreBoard.GetInstance().WriteConsoleBets());
-            Debug.Log(ScoreBoard.GetInstance().WriteConsoleRoundsWon());
-            Debug.Log(ScoreBoard.GetInstance().WriteConsoleScore());
-            //ScoreBoard.GetInstance().UpdateScoreRound(actualRound);
-            UpdateScore();
-            if (actualRound < rounds.Count)
+            if (PhotonNetwork.room != null)
             {
-                RepartirRonda();
-            } else
-            {
-                Debug.Log("ITS OVER");
-                int winner = ScoreBoard.GetInstance().Winner();
-                if (winner == 0)
+                Debug.Log("Room Player Count: " + PhotonNetwork.room.PlayerCount);
+                if (PhotonNetwork.room.PlayerCount == 4)
                 {
-                    winnerText.text = "¡Has ganado!";
-                } else
-                {
-                    winnerText.text = "La siguiente vez será";
+                    if (center.NeedNextRound())
+                    {
+                        center.nextRound = false;
+                        center.ResetValues();
+                        Debug.Log(ScoreBoard.GetInstance().WriteConsoleBets());
+                        Debug.Log(ScoreBoard.GetInstance().WriteConsoleRoundsWon());
+                        Debug.Log(ScoreBoard.GetInstance().WriteConsoleScore());
+                        //ScoreBoard.GetInstance().UpdateScoreRound(actualRound);
+                        UpdateScore();
+                        if (actualRound < rounds.Count)
+                        {
+                            RepartirRonda();
+                        }
+                        else
+                        {
+                            Debug.Log("ITS OVER");
+                            int winner = ScoreBoard.GetInstance().Winner();
+                            if (winner == 0)
+                            {
+                                winnerText.text = "¡Has ganado!";
+                            }
+                            else
+                            {
+                                winnerText.text = "La siguiente vez será";
+                            }
+                            //UnityEngine.SceneManagement.SceneManager.LoadScene("menu");
+                        }
+                    }
                 }
-                //UnityEngine.SceneManagement.SceneManager.LoadScene("menu");
+            }
+        } else
+        {
+            if (center.NeedNextRound())
+            {
+                center.nextRound = false;
+                center.ResetValues();
+                Debug.Log(ScoreBoard.GetInstance().WriteConsoleBets());
+                Debug.Log(ScoreBoard.GetInstance().WriteConsoleRoundsWon());
+                Debug.Log(ScoreBoard.GetInstance().WriteConsoleScore());
+                //ScoreBoard.GetInstance().UpdateScoreRound(actualRound);
+                UpdateScore();
+                if (actualRound < rounds.Count)
+                {
+                    RepartirRonda();
+                }
+                else
+                {
+                    Debug.Log("ITS OVER");
+                    int winner = ScoreBoard.GetInstance().Winner();
+                    if (winner == 0)
+                    {
+                        winnerText.text = "¡Has ganado!";
+                    }
+                    else
+                    {
+                        winnerText.text = "La siguiente vez será";
+                    }
+                    //UnityEngine.SceneManagement.SceneManager.LoadScene("menu");
+                }
             }
         }
     }

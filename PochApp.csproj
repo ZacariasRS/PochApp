@@ -238,10 +238,11 @@
     <Compile Include="Assets\scripts\BoardScript.cs" />
     <Compile Include="Assets\scripts\CardScript.cs" />
     <Compile Include="Assets\scripts\CenterScript.cs" />
+    <Compile Include="Assets\scripts\HandScript.cs" />
     <Compile Include="Assets\scripts\MenuButtonScript.cs" />
     <Compile Include="Assets\scripts\PlayerScript.cs" />
+    <Compile Include="Assets\scripts\PUNManager.cs" />
     <Compile Include="Assets\scripts\ScoreBoard.cs" />
-    <Compile Include="Assets\scripts\TutorialBoardScript.cs" />
     <Compile Include="Assets\scripts\WarningScript.cs" />
   </ItemGroup>
   <ItemGroup>

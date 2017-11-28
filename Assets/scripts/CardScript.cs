@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class CardScript : MonoBehaviour {
 
+    public bool isMultiPlayer;
+
     public int rank; // valor de la carta
     public char palo; // palo al que pertenece
     public int player; // jugador al que pertenece la carta
@@ -60,45 +62,106 @@ public class CardScript : MonoBehaviour {
 
     private void OnMouseDown()
     {
-        if (!inCenter)
+        if (isMultiPlayer)
         {
-            if (alreadyClicked)
+            Debug.Log("ID: " + PhotonNetwork.player.ID);
+            if (PhotonNetwork.player.ID == (player + 1))
             {
-                transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
-                ReturnToInitialPosition();
+                if (!inCenter)
+                {
+                    if (alreadyClicked)
+                    {
+                        transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+                        ReturnToInitialPosition();
 
-                alreadyClicked = false;
+                        alreadyClicked = false;
+                    }
+                    else
+                    {
+                        transform.localScale = new Vector3(2.0f, 2.0f, 1.0f);
+                        transform.position = new Vector3(transform.position.x, transform.position.y, -3.0f);
+                        alreadyClicked = true;
+                    }
+                }
             }
-            else
+        } else
+        {
+            if (!inCenter)
             {
-                transform.localScale = new Vector3(2.0f, 2.0f, 1.0f);
-                transform.position = new Vector3(transform.position.x, transform.position.y, -3.0f);
-                alreadyClicked = true;
+                if (alreadyClicked)
+                {
+                    transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+                    ReturnToInitialPosition();
+
+                    alreadyClicked = false;
+                }
+                else
+                {
+                    transform.localScale = new Vector3(2.0f, 2.0f, 1.0f);
+                    transform.position = new Vector3(transform.position.x, transform.position.y, -3.0f);
+                    alreadyClicked = true;
+                }
             }
         }
     }
 
     private void OnMouseUp()
     {
-        if (!inCenter)
+        if (isMultiPlayer)
         {
-            alreadyClicked = false;
-            transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
-            ReturnToInitialPosition();
+            Debug.Log("ID: " + PhotonNetwork.player.ID);
+            if (PhotonNetwork.player.ID == (player + 1))
+            {
+                if (!inCenter)
+                {
+                    alreadyClicked = false;
+                    transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+                    ReturnToInitialPosition();
+                }
+            }
+        } else
+        {
+            if (!inCenter)
+            {
+                alreadyClicked = false;
+                transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+                ReturnToInitialPosition();
+            }
         }
+        
     }
 
     private void OnMouseDrag()
     {
-        if (!inCenter)
+        if (isMultiPlayer)
         {
-            if (alreadyClicked)
+            Debug.Log("ID: " + PhotonNetwork.player.ID);
+            if (PhotonNetwork.player.ID == (player + 1))
             {
-                Vector3 mousePosition = Input.mousePosition;
-                mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
-                //Debug.Log(mousePosition);
-                mousePosition.z = -3f;
-                transform.position = mousePosition;
+                if (!inCenter)
+                {
+                    if (alreadyClicked)
+                    {
+                        Vector3 mousePosition = Input.mousePosition;
+                        mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
+                        //Debug.Log(mousePosition);
+                        mousePosition.z = -3f;
+                        transform.position = mousePosition;
+                    }
+                }
+            }
+        } else
+        {
+            if (!inCenter)
+            {
+                if (alreadyClicked)
+                {
+                    Vector3 mousePosition = Input.mousePosition;
+                    mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
+                    //Debug.Log(mousePosition);
+                    mousePosition.z = -3f;
+                    transform.position = mousePosition;
+                }
             }
         }
         

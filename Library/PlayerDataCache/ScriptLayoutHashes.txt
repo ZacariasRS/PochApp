@@ -151,7 +151,6 @@ e626bae268f8b272b7a2d07760d262c6 Assembly-CSharp.dll:.PickupController
 1356b4a6096c35c829823b7e28399030 Assembly-CSharp.dll:.HubGui
 5a78906060300940acb71bc3dfb6396d Assembly-CSharp.dll:.DragToMove
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.CubeLerp
-0e42f93db2e2b36a996889a8810ecd33 Assembly-CSharp.dll:.TutorialBoardScript
 9650139907be6d63bf3c3eaa8900f13f Assembly-CSharp.dll:.myThirdPersonController
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.WarningScript
 362c847978adb9cef4966ca1c5403c2b Assembly-CSharp.dll:.MoveCam
@@ -193,7 +192,7 @@ e9bdabf9265d758d56f01bb188916fa8 UnityEngine.Networking.dll:UnityEngine.Networki
 4efe297689455799fab987dfaf7ba0d5 Assembly-CSharp.dll:.OnClickLoadSomething
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.PointedAtGameObjectInfo
 ea580b2edab741d1d6e6445b14097645 Assembly-CSharp.dll:.RPGCamera
-4d13ae6152149f3af8b40ddeca09680a Assembly-CSharp.dll:.CenterScript
+dfa4af5e50f13cadee21f1b3a1742038 Assembly-CSharp.dll:.CenterScript
 173a033cde910692227c728d6b89fedd Assembly-CSharp.dll:.OnClickCallMethod
 1356b4a6096c35c829823b7e28399030 Assembly-CSharp.dll:.IELdemo
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.GameLogic
@@ -208,6 +207,7 @@ febb860c81dce3b7f633ebf56de24419 Assembly-CSharp.dll:.IdleRunJump
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Demo2DJumpAndRun
 55b3a7b2ff445b75487922996bd8611e Assembly-CSharp.dll:ExitGames.Demos.DemoAnimator.PlayerManager
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.RandomMatchmaker
+6ebe31dcabe24eba18d57bcf3a0abdab Assembly-CSharp.dll:.HandScript
 bc68edb0af574bf79f9550ead8ebae5c UnityEngine.HoloLens.dll:UnityEngine.Audio.AudioSpatializerMicrosoft
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.HoloLens.dll:UnityEngine.EventSystems.HoloLensInput
 463516d5b5fe8e67a0a24c48f2095b04 UnityEngine.HoloLens.dll:UnityEngine.EventSystems.HoloLensInputModule
@@ -223,7 +223,7 @@ e29eedec83444c5ff91ad08de30f1219 Assembly-CSharp.dll:.GUICustomAuth
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.ThirdPersonNetwork
 3c64e2ee2ee0571fefcc0fe9214f335c Assembly-CSharp.dll:.RpsDemoConnect
 ec0082b40adf3b0930cd87250ffdbf1d Assembly-CSharp.dll:.SupportLogger
-be46daf904a3cf782717c4f7fb6cc3ab Assembly-CSharp.dll:.MenuButtonScript
+8142b2f51fde5238ee806297482310b8 Assembly-CSharp.dll:.MenuButtonScript
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.PickupTriggerForward
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.OnPickedUpScript
 1356b4a6096c35c829823b7e28399030 Assembly-CSharp.dll:.ShowStatusWhenConnecting
@@ -239,7 +239,7 @@ bd391be401e6d3724720058620cce6e5 Assembly-CSharp.dll:.ToHubButton
 6475769091568e8685a22e493bb5795b Assembly-CSharp.dll:.GUIFriendFinding
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.OnClickRightDestroy
 47d4dbb91b8073a64be47276b7d4f29a Assembly-CSharp.dll:ExitGames.Demos.DemoAnimator.GameManager
-964ac53f3fee9029d385c3ce3ec0d9f8 Assembly-CSharp.dll:.BoardScript
+d426c2df5eb57622626929d4ac86353d Assembly-CSharp.dll:.BoardScript
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.OnDoubleclickDestroy
 4b8b25ed60c1bb417f20991003ba0256 Assembly-CSharp.dll:.WorkerMenu
 604f5f55c1cc414f64da1990b36ff015 Assembly-CSharp.dll:.PhotonView

@@ -6,6 +6,8 @@ using UnityEngine.EventSystems;
 
 public class CenterScript : MonoBehaviour {
 
+    public bool isMultiPlayer;
+
 
     public List<CardScript> cards; // cartas del centro
     public List<PlayerScript> players; // los jugadores
@@ -32,6 +34,10 @@ public class CenterScript : MonoBehaviour {
     public int playerWonRound;
     public bool botBet;
     public bool betReady;
+    public bool isTutorial;
+    public bool nextStep;
+    public bool initialStep;
+    public GameObject hand;
 
     public InputField betD;
     public InputField betR;
@@ -67,6 +73,11 @@ public class CenterScript : MonoBehaviour {
     public Text[] scoreL;
 
     public Text[][] scores;
+
+    public Canvas tutorialCanvas;
+    public Button tutorialButton;
+    public Text tutorialButtonText;
+    public Button[] explainButtons;
 
 
     public void AddPlayers(List<PlayerScript> p)
@@ -121,6 +132,8 @@ public class CenterScript : MonoBehaviour {
         scores[1] = scoreR;
         scores[2] = scoreU;
         scores[3] = scoreL;
+        nextStep = false;
+        initialStep = true;
     }
     // Use this for initialization
     void Start () {
@@ -128,14 +141,18 @@ public class CenterScript : MonoBehaviour {
         revisarJugada = false;
         cards = new List<CardScript>(players.Count);
         pasarTurno = false;
-        nextRound = false;
+        nextRound = true;
         numTurns = 0;
-        betTime = true;
+        betTime = false;
         // UI
     }
 	
 	// Update is called once per frame
 	void Update () {
+        if (isTutorial && actualRound == 0 && initialStep)
+        {
+            betTime = false;
+        }
         if (showScore)
         {
             /*for (int i = 0; i < players.Count; i++)
@@ -144,6 +161,25 @@ public class CenterScript : MonoBehaviour {
             }*/
             FillScoreOrder();
             scoreCanvas.enabled = true;
+            if (isTutorial)
+            {
+                if (actualRound < 5) // TODO: Ponerlo en mas rondas??
+                {
+                    tutorialCanvas.enabled = true;
+                    if (ScoreBoard.GetInstance().GetBet(actualRound, 0) == ScoreBoard.GetInstance().GetRoundsWon(actualRound, 0))
+                    {
+                        tutorialButtonText.text = "Has acertado!\n10 puntos por acertar, mas 5 por bazas ganadas.\n\nPresiona siguiente ronda";
+                    }
+                    else
+                    {
+                        tutorialButtonText.text = "¡Has fallado!\nSe restan 5 puntos por cada baza equivocada.\n\nPresiona siguiente ronda";
+                    }
+                } else
+                {
+                    tutorialCanvas.enabled = true;
+                    tutorialButtonText.text = "Y hasta aqui el tutorial.\n\nPresiona el botón de arriba derecha para volver al menú y poder jugar una partida entera.";
+                }
+            }
         } else
         {
             scoreCanvas.enabled = false;
@@ -195,6 +231,55 @@ public class CenterScript : MonoBehaviour {
                             else warning.text = "Nano no apuestes tanto";
                         }
                     }*/
+                    if (isTutorial)
+                    {
+                        if (!nextStep)
+                        {
+                            buttonSum.interactable = false;
+                            buttonRest.interactable = false;
+                            buttonAcceptBet.interactable = false;
+                            switch (actualRound) // TODO: En caso 0, explicar elementos del tablero
+                            {
+                                case 0:
+                                    tutorialButtonText.text = "Eres el primero en apostar, al elegir el palo de inicio es muy probable que ganes, prueba a apostar 1 utilizando los signos + y -.\n\nPulsa para continuar";
+                                    tutorialCanvas.enabled = true;
+                                    break;
+                                case 1:
+                                    tutorialButtonText.text = "No puedes apostar 0, ya que la suma de las apuestas de todos los jugadores no puede ser igual al de cartas repartidas.\n¡Pero tienes muestra! yo apostaría 1...\n\nPulsa para continuar";
+                                    tutorialCanvas.enabled = true;
+                                    break;
+                                case 2:
+                                    tutorialButtonText.text = "Tienes una carta muy baja, por lo cual es muy probable que no ganes la baza.\nPrueba a apostar 0.\n\nPulsa para continuar";
+                                    tutorialCanvas.enabled = true;
+                                    break;
+                                case 3:
+                                    tutorialButtonText.text = "No te voy a ayudar... pero acuerdate de mirar el palo de la muestra\n\nPulsa para continuar";
+                                    tutorialCanvas.enabled = true;
+                                    break;
+                                case 4:
+                                    tutorialButtonText.text = "¿Deberías apostar 1 o 2?...\n\nPulsa para continuar";
+                                    tutorialCanvas.enabled = true;
+                                    break;
+                                case 5:
+                                    if (ScoreBoard.GetInstance().ScorePlayer(0) > 30)
+                                    {
+                                        tutorialButtonText.text = "Veo que le coges el truco... a ver como lo haces sin ayuda.\n¡Buena suerte!\n\nPulsa para continuar";
+                                        tutorialCanvas.enabled = true;
+                                    } else
+                                    {
+                                        tutorialButtonText.text = "Una manera de jugar que da resultado es apostar el numero de cartas de muestra que tengas.\n\nPulsa para continuar";
+                                    }
+                                    
+                                    break;
+                            }
+                        } else
+                        {
+                            buttonSum.interactable = true;
+                            buttonRest.interactable = true;
+                            buttonAcceptBet.interactable = true;
+                        }
+                    }
+
                     players[0].SetAllCardNormal();
                     betCanvas.enabled = true;
                     if (playerToBet == lastPlayerToBet)
@@ -390,7 +475,7 @@ public class CenterScript : MonoBehaviour {
             }
             else
             {
-                Debug.Log("Ronda over");
+                //Debug.Log("Ronda over");
             }
         }
         if (!players[playerToPlay].imPlayer && !betTime)
@@ -403,6 +488,21 @@ public class CenterScript : MonoBehaviour {
                 }
             }
         }
+        if (isTutorial && !betTime && tutorialButtonText.text == "") // TODO: esto enseña deslizar, en que rondas?
+        {
+            if (actualRound < 3)
+            {
+                if (players[playerToPlay].imPlayer && players[playerToPlay].myTurn)
+                {
+                    hand.SetActive(true);
+                    hand.GetComponent<HandScript>().SetHand(players[0].cards[0]);
+                    hand.GetComponent<HandScript>().moving = true;
+                    tutorialButtonText.text = "Desliza la carta hacia el centro para jugar";
+                    tutorialCanvas.enabled = true;
+                }
+            }
+            
+        }
 	}
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -412,6 +512,11 @@ public class CenterScript : MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (isTutorial) // TODO: solo al entrar?
+        {
+            tutorialCanvas.enabled = false;
+            hand.SetActive(false);
+        }
         if (!revisarJugada && !betTime) // si no estamos revisando jugada ni apostando
         {
             if (auxCards < players.Count)
@@ -671,6 +776,7 @@ public class CenterScript : MonoBehaviour {
         betR.image.color = Color.white;
         betU.image.color = Color.white;
         betL.image.color = Color.white;
+        nextStep = false;
     }
 
     public bool NeedNextRound()
@@ -914,5 +1020,28 @@ public class CenterScript : MonoBehaviour {
     {
         showScore = false;
         nextRound = true;
+        if (isTutorial)
+        {
+            tutorialCanvas.enabled = false;
+        }
+    }
+    
+    public void ButtonNextStep()
+    {
+        if (initialStep)
+        {
+            for (int i = 0; i < explainButtons.Length; i++)
+            {
+                explainButtons[i].gameObject.SetActive(false);
+            }
+            nextStep = false;
+            betTime = true;
+            initialStep = false;
+        } else
+        {
+            nextStep = true;
+            tutorialCanvas.enabled = false;
+            tutorialButtonText.text = "";
+        }
     }
 }
